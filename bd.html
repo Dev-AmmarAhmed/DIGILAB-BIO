@@ -1,0 +1,2582 @@
+
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DIGITALCLASSES DIGILAB — Class 10 Blood Group Typing Virtual Lab</title>
+  <!-- Google Fonts: Inter & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Three.js r128 -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          }
+        }
+      }
+    };
+  </script>
+
+  <style>
+    body {
+      background-color: #0b1120;
+      color: #f3f4f6;
+      font-family: 'Inter', sans-serif;
+      overflow-x: hidden;
+    }
+
+    .scientific-grid {
+      background-image:
+        linear-gradient(to right, rgba(6, 182, 212, 0.04) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(16, 185, 129, 0.04) 1px, transparent 1px);
+      background-size: 36px 36px;
+    }
+
+    /* Custom Range Slider */
+    input[type="range"] {
+      -webkit-appearance: none;
+      appearance: none;
+      background: #1f2937;
+      height: 6px;
+      border-radius: 999px;
+      outline: none;
+    }
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #10b981, #06b6d4);
+      cursor: pointer;
+      border: 2px solid #0b1120;
+      box-shadow: 0 0 10px rgba(6, 182, 212, 0.5);
+    }
+
+    /* 3D Canvas Container */
+    #three-container {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      min-height: 460px;
+      border-radius: 1.25rem;
+      overflow: hidden;
+      touch-action: none;
+      background: radial-gradient(circle at center, #131c31 0%, #070b14 100%);
+    }
+    @media (max-width: 1023px) {
+      #three-container {
+        min-height: 380px;
+      }
+    }
+
+    .callout-label {
+      position: absolute;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+      background: rgba(11, 17, 32, 0.9);
+      border: 1px solid rgba(6, 182, 212, 0.55);
+      color: #ecfeff;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 600;
+      white-space: nowrap;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(4px);
+    }
+    .callout-label::before {
+      content: '';
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #10b981;
+      margin-right: 6px;
+      vertical-align: middle;
+    }
+
+    .glass-dock {
+      background: rgba(11, 17, 32, 0.8);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.45);
+    }
+
+    .studio-btn {
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .studio-btn:active {
+      transform: scale(0.96);
+    }
+
+    @keyframes pulseGlow {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.45); }
+      50% { box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
+    }
+    .next-step-pulse {
+      animation: pulseGlow 2s infinite;
+    }
+
+    .photo-card {
+      transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+    }
+    .photo-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(6, 182, 212, 0.6);
+      box-shadow: 0 12px 28px -8px rgba(6, 182, 212, 0.25);
+    }
+  </style>
+</head>
+<body class="scientific-grid antialiased selection:bg-emerald-500/30 selection:text-emerald-200">
+
+  <!-- ===================================================================== -->
+  <!-- STICKY TOP BRANDING HEADER                                            -->
+  <!-- ===================================================================== -->
+  <header class="sticky top-0 z-40 bg-[#0b1120]/95 backdrop-blur-md border-b border-gray-800 shadow-lg">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
+      <!-- Brand Identity -->
+      <div class="flex items-center gap-3.5">
+        <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-rose-500/20 via-emerald-500/20 to-cyan-500/20 border border-emerald-400/40 flex items-center justify-center shrink-0 shadow-inner">
+          <svg class="w-7 h-7" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="4" y="4" width="32" height="32" rx="8" stroke="url(#gradBrand)" stroke-width="2.2" />
+            <!-- Blood Drop + Cross Emblem -->
+            <path d="M20 10C20 10 13 18.2 13 23.2C13 27.1 16.1 30 20 30C23.9 30 27 27.1 27 23.2C27 18.2 20 10 20 10Z" fill="url(#dropGrad)" />
+            <path d="M20 19.5V25.5M17 22.5H23" stroke="#ffffff" stroke-width="2" stroke-linecap="round" />
+            <defs>
+              <linearGradient id="gradBrand" x1="4" y1="4" x2="36" y2="36" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#10b981" />
+                <stop offset="1" stop-color="#06b6d4" />
+              </linearGradient>
+              <linearGradient id="dropGrad" x1="13" y1="10" x2="27" y2="30" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#fb7185" />
+                <stop offset="1" stop-color="#e11d48" />
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
+
+        <div>
+          <div class="flex flex-wrap items-center gap-2">
+            <h1 class="text-xl sm:text-2xl font-extrabold tracking-tight bg-gradient-to-r from-emerald-400 via-teal-300 to-cyan-400 bg-clip-text text-transparent">
+              DIGITALCLASSES DIGILAB
+            </h1>
+            <span class="px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-wider rounded-full bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">
+              DIGITAL CLASSES • Class 10 Science Practical (Biology)
+            </span>
+          </div>
+          <p class="text-xs text-gray-400 hidden sm:block">
+            Class 10 SSC Practical Module • Human Blood Group Identification (ABO &amp; Rh Typing) Using a Sterile Lancet
+          </p>
+        </div>
+      </div>
+
+      <!-- Quick Navigation Tabs -->
+      <nav class="flex flex-wrap items-center gap-1.5 sm:gap-2">
+        <a href="#section-theory" class="px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium bg-gray-900 hover:bg-gray-800 text-gray-200 hover:text-emerald-300 border border-gray-800 hover:border-emerald-500/40 transition">
+          1. Class 10 Lab Manual
+        </a>
+        <a href="#section-graph" class="px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium bg-gray-900 hover:bg-gray-800 text-gray-200 hover:text-cyan-300 border border-gray-800 hover:border-cyan-500/40 transition">
+          2. Blood Group Chart
+        </a>
+        <a href="#section-gallery" class="px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium bg-gray-900 hover:bg-gray-800 text-gray-200 hover:text-emerald-300 border border-gray-800 hover:border-emerald-500/40 transition">
+          3. Specimen Photos
+        </a>
+        <button type="button" data-open-vlab class="studio-btn flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-bold bg-gradient-to-r from-emerald-500 to-cyan-500 hover:from-emerald-400 hover:to-cyan-400 text-slate-950 shadow-md shadow-cyan-950/50 transition">
+          <span>Enter Virtual Lab</span>
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ===================================================================== -->
+  <!-- MAIN CONTAINER                                                        -->
+  <!-- ===================================================================== -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-12">
+
+    <!-- HERO EXPERIMENT OVERVIEW BANNER -->
+    <section class="rounded-2xl bg-gradient-to-br from-[#111827] via-[#0f172a] to-[#131629] border border-gray-800 p-6 sm:p-8 shadow-xl relative overflow-hidden">
+      <div class="absolute -right-16 -top-16 w-64 h-64 bg-rose-500/10 rounded-full blur-3xl pointer-events-none"></div>
+      <div class="absolute -left-16 -bottom-16 w-64 h-64 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+      <div class="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+        <div class="space-y-3 max-w-3xl">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-rose-500/15 border border-rose-500/30 text-rose-300 text-xs font-semibold">
+            <span>CLASS 10 BIOLOGY PRACTICAL</span>
+            <span>•</span>
+            <span>HUMAN CIRCULATORY SYSTEM</span>
+          </div>
+          <h2 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-white leading-tight">
+            Determination of Human Blood Group (ABO &amp; Rh Typing) Using a Sterile Lancet
+          </h2>
+          <p class="text-gray-300 text-sm sm:text-base leading-relaxed">
+            Learn how human blood groups (<strong>A, B, AB, O</strong> and <strong>Rh+ / Rh−</strong>) are identified in the school laboratory using a finger-prick blood sample from a sterile lancet and <strong>Anti-A, Anti-B, and Anti-D</strong> sera. Read the easy Class 10 manual, explore compatibility charts, inspect microscope photos, and perform the 3D lancet practical yourself!
+          </p>
+          <div class="pt-1 flex flex-wrap items-center gap-3">
+            <button type="button" data-open-vlab class="studio-btn inline-flex items-center gap-2.5 px-5 py-3 rounded-xl text-sm font-extrabold bg-gradient-to-r from-emerald-500 via-teal-400 to-cyan-400 hover:from-emerald-400 hover:to-cyan-300 text-slate-950 shadow-lg shadow-emerald-950/60">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+              <span>Enter Virtual Lab (3D Lancet Practical)</span>
+            </button>
+            <a href="#section-theory" class="px-4 py-3 rounded-xl text-xs sm:text-sm font-semibold bg-gray-900/90 hover:bg-gray-800 text-gray-200 border border-gray-700 transition">
+              Read Class 10 Lab Manual
+            </a>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-2 gap-3 shrink-0">
+          <div class="bg-[#0b1120]/90 border border-gray-800 rounded-xl p-3.5 text-center">
+            <div class="text-xs text-gray-400 uppercase font-semibold">Class Level</div>
+            <div class="text-base font-bold text-emerald-400 mt-0.5">Class 10 (SSC)</div>
+          </div>
+          <div class="bg-[#0b1120]/90 border border-gray-800 rounded-xl p-3.5 text-center">
+            <div class="text-xs text-gray-400 uppercase font-semibold">Instrument</div>
+            <div class="text-base font-bold text-rose-400 mt-0.5">Sterile Lancet</div>
+          </div>
+          <div class="bg-[#0b1120]/90 border border-gray-800 rounded-xl p-3.5 text-center">
+            <div class="text-xs text-gray-400 uppercase font-semibold">Test Sera</div>
+            <div class="text-base font-bold text-cyan-400 mt-0.5">Anti-A, B, D</div>
+          </div>
+          <div class="bg-[#0b1120]/90 border border-gray-800 rounded-xl p-3.5 text-center">
+            <div class="text-xs text-gray-400 uppercase font-semibold">Result Time</div>
+            <div class="text-base font-bold text-amber-300 mt-0.5">1 – 2 Minutes</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =================================================================== -->
+    <!-- SECTION 1: COMPLETE CLASS 10 LAB MANUAL (SIMPLE ENGLISH)            -->
+    <!-- =================================================================== -->
+    <section id="section-theory" class="scroll-mt-24 space-y-6">
+      <div class="flex items-center gap-3">
+        <span class="w-9 h-9 rounded-xl bg-emerald-500/15 border border-emerald-500/40 text-emerald-400 font-bold flex items-center justify-center">1</span>
+        <div>
+          <h3 class="text-xl sm:text-2xl font-bold text-white">Class 10 Biology Lab Manual &amp; Simple Theory</h3>
+          <p class="text-xs sm:text-sm text-gray-400">Easy-to-understand Class 10 textbook notes, procedure, and observation chart</p>
+        </div>
+      </div>
+
+      <!-- Aim & Requirements Grid -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Aim Card -->
+        <div class="bg-[#111827] border border-gray-800 rounded-2xl p-6 shadow-lg flex flex-col justify-between">
+          <div>
+            <h4 class="text-base font-bold text-emerald-400 uppercase tracking-wider mb-3 flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+              1.1 Aim of the Experiment
+            </h4>
+            <p class="text-sm text-gray-300 leading-relaxed">
+              To determine the <strong>ABO blood group</strong> (A, B, AB, or O) and <strong>Rh factor</strong> (Rh+ or Rh−) of a human blood sample collected using a <strong>sterile lancet</strong> by observing <strong>agglutination (clumping)</strong> on a glass slide.
+            </p>
+          </div>
+          <div class="mt-5 pt-4 border-t border-gray-800 text-xs text-gray-400">
+            <strong>Method:</strong> Slide Agglutination Test • <strong>Time Required:</strong> 20–25 Minutes
+          </div>
+        </div>
+
+        <!-- Requirements Card -->
+        <div class="lg:col-span-2 bg-[#111827] border border-gray-800 rounded-2xl p-6 shadow-lg">
+          <h4 class="text-base font-bold text-cyan-400 uppercase tracking-wider mb-4 flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-cyan-400"></span>
+            1.2 Apparatus &amp; Reagents Required
+          </h4>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+            <div class="bg-[#0b1120] border border-gray-800/90 rounded-xl p-4">
+              <div class="font-semibold text-white mb-2">Instruments &amp; Glassware</div>
+              <ul class="space-y-1.5 text-gray-300">
+                <li>• <strong>Sterile Disposable Blood Lancet</strong> (for safe finger prick)</li>
+                <li>• <strong>70% Alcohol Swab</strong> &amp; sterile dry cotton wool</li>
+                <li>• Clean dry <strong>Glass Microscope Slide</strong> (divided into 3 circles)</li>
+                <li>• 3 separate <strong>Plastic Toothpicks / Mixing Sticks</strong></li>
+                <li>• Compound Light Microscope (optional, to confirm clumping)</li>
+              </ul>
+            </div>
+            <div class="bg-[#0b1120] border border-gray-800/90 rounded-xl p-4">
+              <div class="font-semibold text-white mb-2">Blood Grouping Reagents (Antisera)</div>
+              <ul class="space-y-2 text-gray-300">
+                <li class="flex items-center gap-2">
+                  <span class="w-3 h-3 rounded-full bg-sky-400 shrink-0"></span>
+                  <span><strong>Anti-A Serum (Blue color):</strong> Contains antibodies against Antigen A.</span>
+                </li>
+                <li class="flex items-center gap-2">
+                  <span class="w-3 h-3 rounded-full bg-amber-400 shrink-0"></span>
+                  <span><strong>Anti-B Serum (Yellow color):</strong> Contains antibodies against Antigen B.</span>
+                </li>
+                <li class="flex items-center gap-2">
+                  <span class="w-3 h-3 rounded-full bg-gray-200 shrink-0"></span>
+                  <span><strong>Anti-D / Anti-Rh Serum (Colorless):</strong> Contains antibodies against Rh factor.</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Class 10 Theory -->
+      <div class="bg-[#111827] border border-gray-800 rounded-2xl p-6 sm:p-8 shadow-lg space-y-6">
+        <div>
+          <h4 class="text-base font-bold text-emerald-400 uppercase tracking-wider mb-2 flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+            1.3 Class 10 Principle &amp; Simple Theory
+          </h4>
+          <p class="text-sm sm:text-base text-gray-300 leading-relaxed">
+            Human blood groups were discovered by <strong>Karl Landsteiner</strong>. Every person's Red Blood Cells (RBCs) carry special proteins on their outer surface called <strong>Antigens</strong>, while the liquid plasma contains matching defense proteins called <strong>Antibodies</strong>.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div class="bg-[#0b1120] border border-gray-800 rounded-xl p-4">
+            <div class="font-bold text-cyan-400 mb-1.5">1. ABO Blood Group System</div>
+            <p class="text-xs sm:text-sm text-gray-300 leading-relaxed">
+              Depending on the antigens present on RBCs, human blood is divided into four groups:
+              <br>• <strong>Group A:</strong> Has Antigen A on RBCs.
+              <br>• <strong>Group B:</strong> Has Antigen B on RBCs.
+              <br>• <strong>Group AB:</strong> Has both Antigens A &amp; B.
+              <br>• <strong>Group O:</strong> Has neither Antigen A nor B.
+            </p>
+          </div>
+
+          <div class="bg-[#0b1120] border border-gray-800 rounded-xl p-4">
+            <div class="font-bold text-emerald-400 mb-1.5">2. Rh Factor (Positive / Negative)</div>
+            <p class="text-xs sm:text-sm text-gray-300 leading-relaxed">
+              Along with A and B, RBCs may also have another surface protein called the <strong>Rh Antigen (D antigen)</strong>:
+              <br>• <strong>Rh Positive (Rh+):</strong> Rh antigen is present (~85–90% people).
+              <br>• <strong>Rh Negative (Rh−):</strong> Rh antigen is absent.
+            </p>
+          </div>
+
+          <div class="bg-[#0b1120] border border-gray-800 rounded-xl p-4">
+            <div class="font-bold text-rose-400 mb-1.5">3. What is Agglutination (Clumping)?</div>
+            <p class="text-xs sm:text-sm text-gray-300 leading-relaxed">
+              When blood is mixed with an antiserum containing matching antibodies (e.g., Antigen A + Anti-A serum), the antibodies bind the RBCs together into visible red granules or clumps. This clumping is called <strong>Agglutination</strong>.
+            </p>
+          </div>
+        </div>
+
+        <!-- Donor / Recipient Quick Fact Banner -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
+          <div class="bg-emerald-500/10 border border-emerald-500/30 rounded-xl p-4">
+            <div class="text-xs font-bold text-emerald-300 uppercase">Universal Donor — Group O−</div>
+            <p class="text-xs sm:text-sm text-gray-300 mt-1">
+              <strong>O Negative (O−)</strong> RBCs have <em>no A, B, or Rh antigens</em> on their surface, so they do not trigger clumping in any recipient's body.
+            </p>
+          </div>
+          <div class="bg-cyan-500/10 border border-cyan-500/30 rounded-xl p-4">
+            <div class="text-xs font-bold text-cyan-300 uppercase">Universal Recipient — Group AB+</div>
+            <p class="text-xs sm:text-sm text-gray-300 mt-1">
+              <strong>AB Positive (AB+)</strong> individuals have <em>no Anti-A, Anti-B, or Anti-Rh antibodies</em> in their plasma, so they can safely receive blood from any group.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step-by-Step Procedure & Precautions -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div class="lg:col-span-2 bg-[#111827] border border-gray-800 rounded-2xl p-6 shadow-lg">
+          <h4 class="text-base font-bold text-cyan-400 uppercase tracking-wider mb-4 flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-cyan-400"></span>
+            1.4 Step-by-Step Laboratory Procedure
+          </h4>
+          <ol class="space-y-3 text-sm text-gray-300">
+            <li class="flex gap-3">
+              <span class="w-6 h-6 rounded-full bg-cyan-500/20 text-cyan-300 font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">1</span>
+              <span><strong>Label the Glass Slide:</strong> Take a clean, dry glass slide and mark three separate circles labeled <strong>A</strong>, <strong>B</strong>, and <strong>D (Rh)</strong>.</span>
+            </li>
+            <li class="flex gap-3">
+              <span class="w-6 h-6 rounded-full bg-cyan-500/20 text-cyan-300 font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">2</span>
+              <span><strong>Sterilize the Fingertip:</strong> Clean the tip of the left ring finger using a <strong>70% alcohol swab</strong> and allow it to air-dry for a few seconds.</span>
+            </li>
+            <li class="flex gap-3">
+              <span class="w-6 h-6 rounded-full bg-cyan-500/20 text-cyan-300 font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">3</span>
+              <span><strong>Prick with Sterile Lancet:</strong> Uncap a brand-new <strong>sterile lancet</strong>, gently prick the sterilized fingertip once, and wipe away the first tiny drop with dry cotton.</span>
+            </li>
+            <li class="flex gap-3">
+              <span class="w-6 h-6 rounded-full bg-cyan-500/20 text-cyan-300 font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">4</span>
+              <span><strong>Place 3 Drops of Blood &amp; Antisera:</strong> Place one small drop of blood into each circle (A, B, and D). Immediately add 1 drop of <strong>Anti-A (blue)</strong> to circle A, <strong>Anti-B (yellow)</strong> to circle B, and <strong>Anti-D (colorless)</strong> to circle D.</span>
+            </li>
+            <li class="flex gap-3">
+              <span class="w-6 h-6 rounded-full bg-cyan-500/20 text-cyan-300 font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">5</span>
+              <span><strong>Mix &amp; Observe Clumping:</strong> Mix each circle gently with a <em>separate clean toothpick</em> for 30 seconds. Rock the slide gently and observe within 2 minutes whether red clumps form or the liquid stays smooth.</span>
+            </li>
+          </ol>
+        </div>
+
+        <!-- Precautions -->
+        <div class="bg-[#111827] border border-gray-800 rounded-2xl p-6 shadow-lg flex flex-col justify-between">
+          <div>
+            <h4 class="text-base font-bold text-amber-400 uppercase tracking-wider mb-4 flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-amber-400"></span>
+              1.5 Important Lab Precautions
+            </h4>
+            <ul class="space-y-2.5 text-sm text-gray-300">
+              <li class="flex items-start gap-2">
+                <span class="text-amber-400 font-bold">✓</span>
+                <span><strong>Never reuse a lancet:</strong> Always use a fresh, sealed sterile lancet for each person and dispose of it in a sharps bin.</span>
+              </li>
+              <li class="flex items-start gap-2">
+                <span class="text-amber-400 font-bold">✓</span>
+                <span><strong>Use separate mixing sticks:</strong> Never use the same toothpick for Anti-A, Anti-B, and Anti-D circles, or cross-contamination will give a false result.</span>
+              </li>
+              <li class="flex items-start gap-2">
+                <span class="text-amber-400 font-bold">✓</span>
+                <span><strong>Do not let dropper tips touch blood:</strong> Hold antiserum droppers slightly above the blood drop.</span>
+              </li>
+              <li class="flex items-start gap-2">
+                <span class="text-amber-400 font-bold">✓</span>
+                <span><strong>Read within 2 minutes:</strong> Drying at the edges after 3–4 minutes can look like false clumping.</span>
+              </li>
+            </ul>
+          </div>
+          <div class="mt-4 p-3 rounded-xl bg-rose-500/10 border border-rose-500/25 text-xs text-rose-200">
+            <strong>Biosafety Rule:</strong> Always perform finger-prick blood tests under your Class 10 Science teacher's supervision.
+          </div>
+        </div>
+      </div>
+
+      <!-- Complete 8 Blood Groups Observation Table -->
+      <div class="bg-[#111827] border border-gray-800 rounded-2xl p-6 shadow-lg overflow-hidden">
+        <h4 class="text-base font-bold text-emerald-400 uppercase tracking-wider mb-4 flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+          1.6 Observation &amp; Result Interpretation Table (All 8 Blood Groups)
+        </h4>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse text-sm">
+            <thead>
+              <tr class="border-b border-gray-700 bg-[#0b1120] text-gray-200">
+                <th class="py-3 px-4 font-semibold">Anti-A Serum (Blue)</th>
+                <th class="py-3 px-4 font-semibold">Anti-B Serum (Yellow)</th>
+                <th class="py-3 px-4 font-semibold">Anti-D / Rh Serum</th>
+                <th class="py-3 px-4 font-semibold">Antigens on RBC</th>
+                <th class="py-3 px-4 font-semibold">Resulting Blood Group</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-800 text-gray-300">
+              <tr class="hover:bg-gray-800/40">
+                <td class="py-2.5 px-4 text-rose-400 font-semibold">+ Clumping</td>
+                <td class="py-2.5 px-4 text-gray-400">− No Clumping</td>
+                <td class="py-2.5 px-4 text-rose-400 font-semibold">+ Clumping</td>
+                <td class="py-2.5 px-4">Antigen A, Rh</td>
+                <td class="py-2.5 px-4 font-extrabold text-emerald-400">A Positive (A+)</td>
+              </tr>
+              <tr class="hover:bg-gray-800/40">
+                <td class="py-2.5 px-4 text-rose-400 font-semibold">+ Clumping</td>
+                <td class="py-2.5 px-4 text-gray-400">− No Clumping</td>
+                <td class="py-2.5 px-4 text-gray-400">− No Clumping</td>
+                <td class="py-2.5 px-4">Antigen A only</td>
+                <td class="py-2.5 px-4 font-extrabold text-emerald-300">A Negative (A−)</td>
+              </tr>
+              <tr class="hover:bg-gray-800/40">
+                <td class="py-2.5 px-4 text-gray-400">− No Clumping</td>
+                <td class="py-2.5 px-4 text-rose-400 font-semibold">+ Clumping</td>
+                <td class="py-2.5 px-4 text-rose-400 font-semibold">+ Clumping</td>
+                <td class="py-2.5 px-4">Antigen B, Rh</td>
+                <td class="py-2.5 px-4 font-extrabold text-cyan-400">B Positive (B+)</td>
+              </tr>
+              <tr class="hover:bg-gray-800/40">
+                <td class="py-2.5 px-4 text-gray-400">− No Clumping</td>
+                <td class="py-2.5 px-4 text-rose-400 font-semibold">+ Clumping</td>
+                <td class="py-2.5 px-4 text-gray-400">− No Clumping</td>
+                <td class="py-2.5 px-4">Antigen B only</td>
+                <td class="py-2.5 px-4 font-extrabold text-cyan-300">B Negative (B−)</td>
+              </tr>
+              <tr class="hover:bg-gray-800/40">
+                <td class="py-2.5 px-4 text-rose-400 font-semibold">+ Clumping</td>
+                <td class="py-2.5 px-4 text-rose-400 font-semibold">+ Clumping</td>
+                <td class="py-2.5 px-4 text-rose-400 font-semibold">+ Clumping</td>
+                <td class="py-2.5 px-4">Antigens A, B, Rh</td>
+                <td class="py-2.5 px-4 font-extrabold text-purple-400">AB Positive (AB+)</td>
+              </tr>
+              <tr class="hover:bg-gray-800/40">
+                <td class="py-2.5 px-4 text-rose-400 font-semibold">+ Clumping</td>
+                <td class="py-2.5 px-4 text-rose-400 font-semibold">+ Clumping</td>
+                <td class="py-2.5 px-4 text-gray-400">− No Clumping</td>
+                <td class="py-2.5 px-4">Antigens A, B</td>
+                <td class="py-2.5 px-4 font-extrabold text-purple-300">AB Negative (AB−)</td>
+              </tr>
+              <tr class="hover:bg-gray-800/40">
+                <td class="py-2.5 px-4 text-gray-400">− No Clumping</td>
+                <td class="py-2.5 px-4 text-gray-400">− No Clumping</td>
+                <td class="py-2.5 px-4 text-rose-400 font-semibold">+ Clumping</td>
+                <td class="py-2.5 px-4">Rh Antigen only</td>
+                <td class="py-2.5 px-4 font-extrabold text-amber-400">O Positive (O+)</td>
+              </tr>
+              <tr class="hover:bg-gray-800/40">
+                <td class="py-2.5 px-4 text-gray-400">− No Clumping</td>
+                <td class="py-2.5 px-4 text-gray-400">− No Clumping</td>
+                <td class="py-2.5 px-4 text-gray-400">− No Clumping</td>
+                <td class="py-2.5 px-4">None (No A, B, Rh)</td>
+                <td class="py-2.5 px-4 font-extrabold text-rose-400">O Negative (O−)</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- =================================================================== -->
+    <!-- SECTION 2: INTERACTIVE BLOOD GROUP DISTRIBUTION & COMPATIBILITY     -->
+    <!-- =================================================================== -->
+    <section id="section-graph" class="scroll-mt-24 space-y-6">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div class="flex items-center gap-3">
+          <span class="w-9 h-9 rounded-xl bg-cyan-500/15 border border-cyan-500/40 text-cyan-400 font-bold flex items-center justify-center">2</span>
+          <div>
+            <h3 class="text-xl sm:text-2xl font-bold text-white">Interactive Blood Group Frequency Graph &amp; Donor Compatibility</h3>
+            <p class="text-xs sm:text-sm text-gray-400">Explore Indian population blood group percentages and check safe blood donation matching</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <!-- Left: Interactive Canvas Bar Chart -->
+        <div class="lg:col-span-7 bg-[#111827] border border-gray-800 rounded-2xl p-6 shadow-lg flex flex-col justify-between">
+          <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
+            <div>
+              <h4 class="text-sm font-bold text-white uppercase tracking-wider">Blood Group Distribution in India (%)</h4>
+              <p class="text-xs text-gray-400">Hover or tap any bar to see population share and RBC antigens</p>
+            </div>
+            <span class="px-2.5 py-1 rounded-lg text-xs font-mono bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">
+              Most Common: O+ &amp; B+
+            </span>
+          </div>
+
+          <div class="relative w-full h-72 sm:h-80 bg-[#0b1120] border border-gray-800/80 rounded-xl p-2">
+            <canvas id="blood-chart-canvas" class="w-full h-full block cursor-pointer"></canvas>
+            <div id="chart-tooltip" class="hidden absolute pointer-events-none bg-gray-900/95 border border-cyan-500/50 rounded-xl px-3 py-2 text-xs shadow-xl z-10"></div>
+          </div>
+
+          <div class="mt-4 bg-[#0b1120] border border-gray-800 rounded-xl p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
+            <div class="text-gray-300">
+              <strong>Class 10 Exam Tip:</strong> Over <strong>94%</strong> of the Indian population is Rh Positive (Rh+).
+            </div>
+            <div class="text-rose-400 font-semibold">
+              Rarest Group: AB− (~0.4%)
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Interactive Blood Compatibility Checker -->
+        <div class="lg:col-span-5 bg-[#111827] border border-gray-800 rounded-2xl p-6 shadow-lg flex flex-col justify-between space-y-5">
+          <div>
+            <h4 class="text-sm font-bold text-emerald-400 uppercase tracking-wider mb-1">Interactive Blood Transfusion Matcher</h4>
+            <p class="text-xs text-gray-400 mb-3">Tap a blood group below to see safe donors &amp; recipients</p>
+
+            <div class="grid grid-cols-4 gap-2" id="compat-group-buttons">
+              <!-- Populated by JS -->
+            </div>
+          </div>
+
+          <!-- Compatibility Readout -->
+          <div class="space-y-3 pt-3 border-t border-gray-800">
+            <div class="bg-[#0b1120] border border-gray-800 rounded-xl p-3.5">
+              <div class="flex items-center justify-between">
+                <span class="text-xs text-gray-400 uppercase font-semibold">Selected Group</span>
+                <span id="compat-selected-badge" class="text-base font-extrabold text-emerald-400 font-mono">O+</span>
+              </div>
+              <div id="compat-antigen-info" class="text-xs text-gray-300 mt-1">
+                RBC Antigens: <strong>Rh (D) only</strong> • Plasma Antibodies: <strong>Anti-A &amp; Anti-B</strong>
+              </div>
+            </div>
+
+            <div class="bg-[#0b1120] border border-emerald-500/30 rounded-xl p-3.5">
+              <div class="text-[11px] font-bold text-emerald-400 uppercase mb-1.5">Can Donate RBCs To:</div>
+              <div id="compat-donate-list" class="flex flex-wrap gap-1.5"></div>
+            </div>
+
+            <div class="bg-[#0b1120] border border-cyan-500/30 rounded-xl p-3.5">
+              <div class="text-[11px] font-bold text-cyan-400 uppercase mb-1.5">Can Receive RBCs From:</div>
+              <div id="compat-receive-list" class="flex flex-wrap gap-1.5"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =================================================================== -->
+    <!-- SECTION 3: SPECIMEN & AGGLUTINATION PHOTO GALLERY (6 LAB PLATES)    -->
+    <!-- =================================================================== -->
+    <section id="section-gallery" class="scroll-mt-24 space-y-6">
+      <div class="flex items-center gap-3">
+        <span class="w-9 h-9 rounded-xl bg-emerald-500/15 border border-emerald-500/40 text-emerald-400 font-bold flex items-center justify-center">3</span>
+        <div>
+          <h3 class="text-xl sm:text-2xl font-bold text-white">Specimen &amp; Agglutination Photo Gallery</h3>
+          <p class="text-xs sm:text-sm text-gray-400">Clear lab photographs &amp; microscope slides with scale bars • Click any photo to enlarge</p>
+        </div>
+      </div>
+
+      <div id="gallery-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- 6 Plates populated via JS -->
+      </div>
+    </section>
+
+    <!-- =================================================================== -->
+    <!-- SECTION 4: INTERACTIVE 3D LANCET BLOOD TYPING LAB (THREE.JS WEBGL)  -->
+    <!-- =================================================================== -->
+    <section id="section-3d" class="scroll-mt-24 space-y-6">
+      <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+        <div class="flex items-center gap-3">
+          <span class="w-10 h-10 rounded-xl bg-gradient-to-br from-rose-500/25 to-cyan-500/25 border border-cyan-400/50 text-cyan-300 font-bold flex items-center justify-center shadow-lg shadow-cyan-950/40">4</span>
+          <div>
+            <h3 class="text-xl sm:text-2xl font-bold text-white">Interactive 3D Lancet Blood Group Practical</h3>
+            <p class="text-xs sm:text-sm text-gray-400">Perform the sterile lancet finger-prick &amp; antisera test in 3D, or launch the Split-Screen Virtual Lab</p>
+          </div>
+        </div>
+      <!-- Main 3D Viewport & Studio Deck Card (Inline Horizontal Split Layout) -->
+      <div id="inline-3d-card" class="bg-gradient-to-b from-[#111827] to-[#0d1424] border border-gray-800 rounded-3xl p-4 sm:p-5 shadow-2xl">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch">
+          <!-- LEFT COLUMN (7/12): Spacious 3D Simulation Stage -->
+          <div id="inline-canvas-host" class="lg:col-span-7 flex flex-col min-h-[420px] lg:min-h-[600px]">
+            <div id="three-container" class="border border-gray-800/90 shadow-inner rounded-2xl flex-1">
+              <!-- Top-Left Compact Mode & View Bar -->
+              <div class="absolute top-3 left-3 z-20 flex flex-col gap-1.5 pointer-events-auto max-w-[58%]">
+                <span id="hud-mode-badge" class="glass-dock px-2.5 py-1 rounded-full text-[10px] font-bold tracking-wide text-emerald-300 self-start">
+                  MODE A • STERILE LANCET BLOOD TYPING
+                </span>
+
+                <!-- Quick Camera Angle Pills -->
+                <div class="glass-dock inline-flex flex-wrap items-center gap-1 p-1 rounded-xl self-start">
+                  <button data-cam-preset="iso" class="cam-preset-btn studio-btn px-2 py-0.5 rounded-lg text-[10px] font-semibold bg-cyan-600/80 text-white">3D Iso</button>
+                  <button data-cam-preset="top" class="cam-preset-btn studio-btn px-2 py-0.5 rounded-lg text-[10px] font-semibold text-gray-300 hover:bg-white/10">Top Slide</button>
+                  <button data-cam-preset="finger" class="cam-preset-btn studio-btn px-2 py-0.5 rounded-lg text-[10px] font-semibold text-gray-300 hover:bg-white/10">Lancet</button>
+                  <button data-cam-preset="front" class="cam-preset-btn studio-btn px-2 py-0.5 rounded-lg text-[10px] font-semibold text-gray-300 hover:bg-white/10">Front</button>
+                </div>
+              </div>
+
+              <!-- Top-Right Live Microscope Eyepiece PIP Window (Visible in Mode A) -->
+              <div id="eyepiece-pip" class="glass-dock absolute top-3 right-3 z-20 w-36 sm:w-40 rounded-2xl p-2 shadow-2xl pointer-events-auto">
+                <div class="flex items-center justify-between text-[10px] font-mono text-cyan-300 mb-1">
+                  <span class="flex items-center gap-1">
+                    <span class="w-1.5 h-1.5 rounded-full bg-rose-400 animate-ping"></span>
+                    400x VIEW
+                  </span>
+                  <select id="pip-well-select" class="bg-gray-900 border border-cyan-500/40 rounded px-1 py-0.5 text-[10px] text-cyan-200 outline-none">
+                    <option value="A">Well A</option>
+                    <option value="B">Well B</option>
+                    <option value="D">Well D</option>
+                  </select>
+                </div>
+                <div class="relative w-24 h-24 sm:w-28 sm:h-28 rounded-full overflow-hidden border-2 border-cyan-500/40 bg-black mx-auto shadow-inner">
+                  <canvas id="pip-eyepiece-canvas" width="200" height="200" class="w-full h-full block"></canvas>
+                </div>
+                <div id="pip-status-text" class="text-[10px] text-center text-gray-200 mt-1 font-semibold truncate">
+                  Clean Glass Slide
+                </div>
+              </div>
+
+              <!-- Floating 3D Callout Labels Container (Hidden by default until toggled ON) -->
+              <div id="callout-layer" class="absolute inset-0 z-10 pointer-events-none overflow-hidden"></div>
+
+              <!-- Bottom Glassmorphic Camera Dock -->
+              <div class="absolute bottom-3 left-3 right-3 z-20 flex flex-wrap items-center justify-between gap-2 pointer-events-none">
+                <div class="glass-dock flex items-center gap-1 p-1 rounded-xl pointer-events-auto">
+                  <button id="btn-toggle-rotate" class="studio-btn flex items-center gap-1 px-2.5 py-1 rounded-lg text-[11px] font-semibold text-gray-200 hover:bg-white/10">
+                    <span id="rotate-label">Rotate: OFF</span>
+                  </button>
+                  <button id="btn-toggle-labels" class="studio-btn flex items-center gap-1 px-2.5 py-1 rounded-lg text-[11px] font-semibold text-gray-300 hover:bg-white/10 border border-transparent">
+                    <span id="labels-label">Labels: OFF</span>
+                  </button>
+                  <button id="btn-reset-camera" class="studio-btn flex items-center gap-1 px-2.5 py-1 rounded-lg text-[11px] font-semibold text-emerald-300 hover:bg-white/10">
+                    <span>Reset</span>
+                  </button>
+                </div>
+
+                <!-- Smooth Zoom Control Bar -->
+                <div class="glass-dock flex items-center gap-1.5 px-2.5 py-1 rounded-xl pointer-events-auto">
+                  <button id="btn-zoom-out" class="studio-btn w-6 h-6 rounded-lg bg-white/5 hover:bg-white/15 text-white font-bold flex items-center justify-center" title="Zoom Out">−</button>
+                  <input id="slider-zoom" type="range" min="45" max="185" value="115" class="w-16 sm:w-24" title="Zoom Distance" />
+                  <button id="btn-zoom-in" class="studio-btn w-6 h-6 rounded-lg bg-white/5 hover:bg-white/15 text-white font-bold flex items-center justify-center" title="Zoom In">+</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- RIGHT COLUMN (5/12): Clean, Organized Vertical Control Sidebar -->
+          <div class="lg:col-span-5 bg-[#0b1120]/90 border border-gray-800 rounded-2xl p-4 flex flex-col justify-between gap-4">
+            <!-- Top Mode Switcher Bar -->
+            <div id="inline-mode-switcher-host" class="border-b border-gray-800 pb-3">
+              <div id="mode-switcher-bar" class="grid grid-cols-2 gap-1.5 p-1 rounded-xl bg-[#111827] border border-gray-800">
+                <button id="mode-btn-lancet" class="studio-btn flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-bold bg-gradient-to-r from-emerald-600 to-cyan-600 text-white shadow">
+                  <span>Mode A: Lancet Test</span>
+                </button>
+                <button id="mode-btn-rbc" class="studio-btn flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-bold text-gray-400 hover:text-white">
+                  <span>Mode B: 3D RBC Cell</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Organized Controls Container -->
+            <div id="inline-controls-host" class="flex-1 flex flex-col justify-between space-y-4 overflow-y-auto">
+              <!-- =============================================================== -->
+              <!-- MODE A CONTROLS: 3D LANCET BLOOD TYPING PRACTICAL               -->
+              <!-- =============================================================== -->
+              <div id="controls-mode-a" class="space-y-4">
+                <!-- Card 1: Sample Selector & Auto-Play -->
+                <div class="bg-[#111827] border border-gray-800/90 rounded-xl p-3.5 space-y-3">
+                  <div class="flex items-center justify-between gap-2">
+                    <span class="text-[11px] font-bold text-cyan-300 uppercase tracking-wider">1. Select Blood Sample</span>
+                    <span id="hud-stage-badge" class="text-[11px] font-mono text-emerald-400 truncate">Step 0: Ready</span>
+                  </div>
+
+                  <div class="grid grid-cols-3 gap-1.5" id="sample-group-selector">
+                    <button data-sample="A+" class="sample-btn studio-btn py-1.5 rounded-lg text-xs font-bold bg-emerald-600 text-white border border-emerald-400">Sample: A+</button>
+                    <button data-sample="B+" class="sample-btn studio-btn py-1.5 rounded-lg text-xs font-bold bg-gray-800 text-gray-300 hover:bg-gray-700">Group B+</button>
+                    <button data-sample="AB+" class="sample-btn studio-btn py-1.5 rounded-lg text-xs font-bold bg-gray-800 text-gray-300 hover:bg-gray-700">Group AB+</button>
+                    <button data-sample="O+" class="sample-btn studio-btn py-1.5 rounded-lg text-xs font-bold bg-gray-800 text-gray-300 hover:bg-gray-700">Group O+</button>
+                    <button data-sample="O-" class="sample-btn studio-btn py-1.5 rounded-lg text-xs font-bold bg-gray-800 text-gray-300 hover:bg-gray-700">Group O−</button>
+                    <button data-sample="MYSTERY" class="sample-btn studio-btn py-1.5 rounded-lg text-xs font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40 hover:bg-amber-500/30">❓ Mystery</button>
+                  </div>
+
+                  <div class="grid grid-cols-2 gap-2 pt-1">
+                    <button id="btn-autoplay-prep" class="studio-btn flex items-center justify-center gap-1.5 py-2 rounded-lg text-xs font-bold bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white shadow">
+                      <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z"/></svg>
+                      <span id="autoplay-prep-label">Auto-Play Practical</span>
+                    </button>
+                    <button id="btn-prep-reset" class="studio-btn py-2 rounded-lg text-xs font-semibold bg-gray-800 hover:bg-gray-700 text-gray-300 border border-gray-700">
+                      Reset Practical
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Card 2: Clean 5-Step Procedure List -->
+                <div class="bg-[#111827] border border-gray-800/90 rounded-xl p-3.5 space-y-2">
+                  <div class="text-[11px] font-bold text-cyan-300 uppercase tracking-wider mb-1">2. Step-by-Step Lancet Procedure</div>
+
+                  <button data-prep-step="1" class="prep-step-btn studio-btn next-step-pulse w-full flex items-center justify-between px-3 py-2 rounded-xl bg-[#0b1120] hover:bg-gray-800/90 border border-emerald-500/40 text-left">
+                    <div class="flex items-center gap-2.5">
+                      <span class="px-1.5 py-0.5 rounded bg-cyan-500/15 text-cyan-400 text-[10px] font-mono font-bold">01</span>
+                      <div>
+                        <div class="text-xs font-bold text-white">70% Alcohol Swab</div>
+                        <div class="text-[10px] text-gray-400">Sterilize left ring fingertip</div>
+                      </div>
+                    </div>
+                    <span class="step-check text-xs text-cyan-400 font-bold">●</span>
+                  </button>
+
+                  <button data-prep-step="2" class="prep-step-btn studio-btn w-full flex items-center justify-between px-3 py-2 rounded-xl bg-[#0b1120] hover:bg-gray-800/90 border border-gray-800 text-left">
+                    <div class="flex items-center gap-2.5">
+                      <span class="px-1.5 py-0.5 rounded bg-rose-500/15 text-rose-400 text-[10px] font-mono font-bold">02</span>
+                      <div>
+                        <div class="text-xs font-bold text-white">Prick with Sterile Lancet</div>
+                        <div class="text-[10px] text-gray-400">Draw capillary blood drop on finger</div>
+                      </div>
+                    </div>
+                    <span class="step-check text-xs text-gray-500 font-bold">○</span>
+                  </button>
+
+                  <button data-prep-step="3" class="prep-step-btn studio-btn w-full flex items-center justify-between px-3 py-2 rounded-xl bg-[#0b1120] hover:bg-gray-800/90 border border-gray-800 text-left">
+                    <div class="flex items-center gap-2.5">
+                      <span class="px-1.5 py-0.5 rounded bg-red-500/15 text-red-400 text-[10px] font-mono font-bold">03</span>
+                      <div>
+                        <div class="text-xs font-bold text-white">Place 3 Blood Drops on Slide</div>
+                        <div class="text-[10px] text-gray-400">1 drop each in Circles A, B, and D</div>
+                      </div>
+                    </div>
+                    <span class="step-check text-xs text-gray-500 font-bold">○</span>
+                  </button>
+
+                  <button data-prep-step="4" class="prep-step-btn studio-btn w-full flex items-center justify-between px-3 py-2 rounded-xl bg-[#0b1120] hover:bg-gray-800/90 border border-gray-800 text-left">
+                    <div class="flex items-center gap-2.5">
+                      <span class="px-1.5 py-0.5 rounded bg-amber-500/15 text-amber-400 text-[10px] font-mono font-bold">04</span>
+                      <div>
+                        <div class="text-xs font-bold text-white">Add Antisera Drops</div>
+                        <div class="text-[10px] text-gray-400">Anti-A (Blue), Anti-B (Yellow), Anti-D</div>
+                      </div>
+                    </div>
+                    <span class="step-check text-xs text-gray-500 font-bold">○</span>
+                  </button>
+
+                  <button data-prep-step="5" class="prep-step-btn studio-btn w-full flex items-center justify-between px-3 py-2 rounded-xl bg-[#0b1120] hover:bg-gray-800/90 border border-gray-800 text-left">
+                    <div class="flex items-center gap-2.5">
+                      <span class="px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-400 text-[10px] font-mono font-bold">05</span>
+                      <div>
+                        <div class="text-xs font-bold text-white">Mix &amp; Observe Clumps</div>
+                        <div class="text-[10px] text-gray-400">Stir with separate toothpicks &amp; read result</div>
+                      </div>
+                    </div>
+                    <span class="step-check text-xs text-gray-500 font-bold">○</span>
+                  </button>
+                </div>
+
+                <!-- Card 3: Live Slide Well Readout -->
+                <div class="bg-[#111827] border border-gray-800 rounded-xl p-3.5 space-y-2.5">
+                  <div class="flex items-center justify-between gap-2">
+                    <span class="text-[11px] font-bold uppercase tracking-wider text-cyan-300">3. Slide Observation</span>
+                    <span id="practical-result-banner" class="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-gray-800 text-gray-300">
+                      Complete Step 5
+                    </span>
+                  </div>
+
+                  <div class="grid grid-cols-3 gap-2 text-center text-[11px]">
+                    <div class="bg-[#0b1120] border border-sky-500/30 rounded-lg p-2">
+                      <div class="font-bold text-sky-400">Circle A</div>
+                      <div id="well-status-a" class="mt-0.5 font-mono text-gray-400">Empty</div>
+                    </div>
+                    <div class="bg-[#0b1120] border border-amber-500/30 rounded-lg p-2">
+                      <div class="font-bold text-amber-400">Circle B</div>
+                      <div id="well-status-b" class="mt-0.5 font-mono text-gray-400">Empty</div>
+                    </div>
+                    <div class="bg-[#0b1120] border border-gray-600/50 rounded-lg p-2">
+                      <div class="font-bold text-gray-200">Circle D</div>
+                      <div id="well-status-d" class="mt-0.5 font-mono text-gray-400">Empty</div>
+                    </div>
+                  </div>
+
+                  <!-- Student Quiz for Mystery Sample -->
+                  <div id="mystery-quiz-box" class="hidden pt-2 border-t border-gray-800 space-y-2">
+                    <div class="text-[11px] font-bold text-amber-300">Identify the Mystery Blood Group:</div>
+                    <div class="grid grid-cols-4 gap-1" id="mystery-answer-buttons">
+                      <button data-guess="A+" class="guess-btn py-1 rounded text-xs font-bold bg-gray-800 hover:bg-cyan-600 text-white">A+</button>
+                      <button data-guess="A-" class="guess-btn py-1 rounded text-xs font-bold bg-gray-800 hover:bg-cyan-600 text-white">A−</button>
+                      <button data-guess="B+" class="guess-btn py-1 rounded text-xs font-bold bg-gray-800 hover:bg-cyan-600 text-white">B+</button>
+                      <button data-guess="B-" class="guess-btn py-1 rounded text-xs font-bold bg-gray-800 hover:bg-cyan-600 text-white">B−</button>
+                      <button data-guess="AB+" class="guess-btn py-1 rounded text-xs font-bold bg-gray-800 hover:bg-cyan-600 text-white">AB+</button>
+                      <button data-guess="AB-" class="guess-btn py-1 rounded text-xs font-bold bg-gray-800 hover:bg-cyan-600 text-white">AB−</button>
+                      <button data-guess="O+" class="guess-btn py-1 rounded text-xs font-bold bg-gray-800 hover:bg-cyan-600 text-white">O+</button>
+                      <button data-guess="O-" class="guess-btn py-1 rounded text-xs font-bold bg-gray-800 hover:bg-cyan-600 text-white">O−</button>
+                    </div>
+                    <div id="mystery-feedback" class="text-[11px] font-semibold"></div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- =============================================================== -->
+              <!-- MODE B CONTROLS: 3D RED BLOOD CELL & ANTIGEN EXPLORER           -->
+              <!-- =============================================================== -->
+              <div id="controls-mode-b" class="hidden space-y-4">
+                <div class="bg-[#111827] border border-gray-800 rounded-xl p-3.5 space-y-1.5">
+                  <div class="flex items-center gap-2">
+                    <span class="px-2 py-0.5 rounded bg-rose-500/15 text-rose-400 text-[10px] font-mono font-bold uppercase">Class 10 Model</span>
+                    <span id="rbc-model-title" class="text-xs font-bold text-white">Red Blood Cell (Group A+)</span>
+                  </div>
+                  <p id="rbc-model-desc" class="text-xs text-gray-300 leading-relaxed">
+                    Group A+ Red Blood Cells carry triangular <strong>Antigen A</strong> spikes and square <strong>Rh (D)</strong> markers on their biconcave membrane.
+                  </p>
+                </div>
+
+                <!-- Select RBC Blood Group -->
+                <div class="bg-[#111827] border border-gray-800 rounded-xl p-3.5 space-y-2">
+                  <div class="text-[11px] font-bold text-cyan-300 uppercase tracking-wider">Choose RBC Antigen Type</div>
+                  <div class="grid grid-cols-2 gap-2">
+                    <button data-rbc-type="A+" class="rbc-type-btn studio-btn px-3 py-2.5 rounded-xl text-xs font-bold bg-gradient-to-r from-emerald-600 to-cyan-600 text-white border border-emerald-400/50 shadow">
+                      <div class="text-[10px] opacity-80 font-mono">ANTIGEN A + Rh</div>
+                      <div>Group A+ RBC</div>
+                    </button>
+                    <button data-rbc-type="B+" class="rbc-type-btn studio-btn px-3 py-2.5 rounded-xl text-xs font-bold bg-[#0b1120] hover:bg-gray-800 text-gray-300 border border-gray-800">
+                      <div class="text-[10px] text-cyan-400 font-mono">ANTIGEN B + Rh</div>
+                      <div>Group B+ RBC</div>
+                    </button>
+                    <button data-rbc-type="AB+" class="rbc-type-btn studio-btn px-3 py-2.5 rounded-xl text-xs font-bold bg-[#0b1120] hover:bg-gray-800 text-gray-300 border border-gray-800">
+                      <div class="text-[10px] text-purple-400 font-mono">A + B + Rh</div>
+                      <div>Group AB+ RBC</div>
+                    </button>
+                    <button data-rbc-type="O-" class="rbc-type-btn studio-btn px-3 py-2.5 rounded-xl text-xs font-bold bg-[#0b1120] hover:bg-gray-800 text-gray-300 border border-gray-800">
+                      <div class="text-[10px] text-rose-400 font-mono">NO ANTIGENS</div>
+                      <div>Group O− RBC</div>
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Antibody Binding Simulation Toggle -->
+                <div class="bg-[#111827] border border-gray-800 rounded-xl p-3.5 space-y-2.5">
+                  <div>
+                    <div class="text-xs font-bold text-white">Simulate Antiserum (Antibody) Binding</div>
+                    <div class="text-[11px] text-gray-400 mt-0.5">Attach Y-shaped antibodies to matching antigens on the RBC surface</div>
+                  </div>
+                  <button id="btn-toggle-antibodies" class="studio-btn w-full py-2.5 rounded-xl text-xs font-bold bg-gray-800 hover:bg-gray-700 text-cyan-300 border border-cyan-500/40">
+                    Show Antibodies: OFF
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ===================================================================== -->
+  <!-- FULL-SCREEN SPLIT-SCREEN VIRTUAL LAB STUDIO MODAL                     -->
+  <!-- Left: Live 3D Simulation Stage | Right: Interactive Experiment Deck   -->
+  <!-- ===================================================================== -->
+  <div id="virtual-lab-modal" class="fixed inset-0 z-50 hidden bg-[#070b14] flex flex-col">
+    <!-- Top Studio Header Bar -->
+    <div class="shrink-0 px-4 sm:px-6 py-2.5 bg-[#0b1120] border-b border-gray-800 flex items-center justify-between gap-3">
+      <div class="flex items-center gap-3">
+        <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="text-sm sm:text-base font-extrabold tracking-tight bg-gradient-to-r from-emerald-400 to-cyan-400 bg-clip-text text-transparent">
+              DIGITALCLASSES DIGILAB
+            </span>
+            <span class="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-rose-500/15 text-rose-300 border border-rose-500/30">
+              CLASS 10 VIRTUAL LAB
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <button id="btn-close-vlab" type="button" class="studio-btn flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-bold bg-gray-800 hover:bg-rose-600 text-gray-200 hover:text-white border border-gray-700 transition">
+        <span>Exit Virtual Lab</span>
+        <span>✕</span>
+      </button>
+    </div>
+
+    <!-- Split-Screen Body: Left = 3D Viewport, Right = Controls Sidebar -->
+    <div class="flex-1 min-h-0 flex flex-col lg:flex-row overflow-hidden">
+      <!-- LEFT SIDE: LIVE 3D SIMULATION STAGE -->
+      <div id="vlab-left-stage" class="flex-1 min-h-[45vh] lg:min-h-0 p-3 sm:p-4 bg-[#070b14] flex flex-col">
+        <!-- #three-container gets mounted here when Virtual Lab opens -->
+      </div>
+
+      <!-- RIGHT SIDE: INTERACTIVE EXPERIMENT CONTROLS PANEL -->
+      <aside class="w-full lg:w-[410px] xl:w-[440px] shrink-0 bg-[#0d1424] border-t lg:border-t-0 lg:border-l border-gray-800 flex flex-col min-h-0 max-h-[55vh] lg:max-h-none">
+        <div class="p-3 bg-[#111827] border-b border-gray-800 shrink-0 space-y-2">
+          <div class="text-[11px] font-bold uppercase tracking-wider text-emerald-400 flex items-center gap-1.5">
+            <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+            Practical Controls
+          </div>
+          <div id="vlab-mode-switcher-slot"></div>
+        </div>
+        <div id="vlab-right-controls" class="flex-1 overflow-y-auto p-3.5 space-y-3.5">
+          <!-- #controls-mode-a & #controls-mode-b get mounted here when Virtual Lab opens -->
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <!-- ===================================================================== -->
+  <!-- LIGHTBOX MODAL FOR SPECIMEN MICROGRAPHS                               -->
+  <!-- ===================================================================== -->
+  <div id="photo-lightbox" class="fixed inset-0 z-50 hidden bg-black/90 backdrop-blur-md flex items-center justify-center p-4">
+    <div class="bg-[#111827] border border-gray-700 rounded-2xl max-w-4xl w-full overflow-hidden shadow-2xl">
+      <div class="flex items-center justify-between px-5 py-3.5 border-b border-gray-800">
+        <div>
+          <span id="lightbox-badge" class="text-xs font-mono text-cyan-400 uppercase font-bold">LAB PLATE</span>
+          <h4 id="lightbox-title" class="text-base sm:text-lg font-bold text-white">Specimen Title</h4>
+        </div>
+        <button id="lightbox-close" class="px-3 py-1.5 rounded-lg bg-gray-800 hover:bg-rose-600 text-white text-xs font-bold transition">
+          Close ✕
+        </button>
+      </div>
+      <div class="p-4 sm:p-6 bg-[#0b1120] flex flex-col items-center">
+        <canvas id="lightbox-canvas" width="900" height="540" class="w-full max-h-[60vh] object-contain rounded-xl border border-gray-800 shadow-lg"></canvas>
+        <p id="lightbox-caption" class="text-xs sm:text-sm text-gray-300 mt-4 leading-relaxed text-center max-w-3xl"></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================================================================== -->
+  <!-- FOOTER CREDITED TO DIGITAL CLASSES                                    -->
+  <!-- ===================================================================== -->
+  <footer class="border-t border-gray-800 bg-[#080d19] mt-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div class="flex items-center gap-3">
+        <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+        <span class="font-bold text-white tracking-wide">DIGITALCLASSES DIGILAB</span>
+        <span class="text-xs text-gray-500">|</span>
+        <span class="text-xs text-gray-400">Class 10 Virtual Science Laboratory</span>
+      </div>
+      <div class="text-xs text-gray-400 text-center sm:text-right">
+        Designed &amp; Engineered for <strong class="text-emerald-400">DIGITAL CLASSES</strong> • Class 10 Biology Practical
+      </div>
+    </div>
+  </footer>
+
+  <!-- ===================================================================== -->
+  <!-- COMPLETE APPLICATION LOGIC (CHART, GALLERY & THREE.JS 3D LANCET LAB)  -->
+  <!-- ===================================================================== -->
+  <script>
+    /**
+     * =========================================================================
+     * PART 1: BLOOD GROUP FREQUENCY GRAPH & TRANSFUSION COMPATIBILITY MATCHER
+     * =========================================================================
+     */
+    const bloodGroupData = [
+      { group: 'O+',  pct: 32.5, color: '#10b981', antigens: 'Rh (D) only',       antibodies: 'Anti-A, Anti-B',   donateTo: ['O+', 'A+', 'B+', 'AB+'], receiveFrom: ['O+', 'O-'] },
+      { group: 'B+',  pct: 31.8, color: '#06b6d4', antigens: 'Antigen B, Rh',     antibodies: 'Anti-A',           donateTo: ['B+', 'AB+'],             receiveFrom: ['B+', 'B-', 'O+', 'O-'] },
+      { group: 'A+',  pct: 21.8, color: '#6366f1', antigens: 'Antigen A, Rh',     antibodies: 'Anti-B',           donateTo: ['A+', 'AB+'],             receiveFrom: ['A+', 'A-', 'O+', 'O-'] },
+      { group: 'AB+', pct: 7.3,  color: '#a855f7', antigens: 'Antigens A, B, Rh', antibodies: 'None',             donateTo: ['AB+'],                   receiveFrom: ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'] },
+      { group: 'O-',  pct: 2.6,  color: '#f43f5e', antigens: 'None (Universal)',  antibodies: 'Anti-A, Anti-B',   donateTo: ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'], receiveFrom: ['O-'] },
+      { group: 'B-',  pct: 2.1,  color: '#38bdf8', antigens: 'Antigen B only',    antibodies: 'Anti-A',           donateTo: ['B+', 'B-', 'AB+', 'AB-'], receiveFrom: ['B-', 'O-'] },
+      { group: 'A-',  pct: 1.5,  color: '#818cf8', antigens: 'Antigen A only',    antibodies: 'Anti-B',           donateTo: ['A+', 'A-', 'AB+', 'AB-'], receiveFrom: ['A-', 'O-'] },
+      { group: 'AB-', pct: 0.4,  color: '#f59e0b', antigens: 'Antigens A & B',    antibodies: 'None',             donateTo: ['AB+', 'AB-'],            receiveFrom: ['A-', 'B-', 'AB-', 'O-'] }
+    ];
+
+    let selectedCompatGroup = 'O+';
+    let chartHitRegions = [];
+
+    function initCompatibilityUI() {
+      const btnContainer = document.getElementById('compat-group-buttons');
+      btnContainer.innerHTML = '';
+
+      bloodGroupData.forEach(item => {
+        const btn = document.createElement('button');
+        btn.className = 'compat-btn studio-btn py-2 rounded-xl text-xs font-extrabold border transition';
+        btn.setAttribute('data-group', item.group);
+        btn.textContent = item.group;
+        btn.addEventListener('click', () => {
+          selectedCompatGroup = item.group;
+          updateCompatibilityUI();
+        });
+        btnContainer.appendChild(btn);
+      });
+
+      updateCompatibilityUI();
+      drawBloodChart();
+      setupChartHover();
+    }
+
+    function updateCompatibilityUI() {
+      const info = bloodGroupData.find(d => d.group === selectedCompatGroup);
+      if (!info) return;
+
+      document.querySelectorAll('.compat-btn').forEach(btn => {
+        const isSelected = btn.getAttribute('data-group') === selectedCompatGroup;
+        btn.className = isSelected
+          ? 'compat-btn studio-btn py-2 rounded-xl text-xs font-extrabold bg-gradient-to-r from-emerald-600 to-cyan-600 text-white border border-emerald-400 shadow'
+          : 'compat-btn studio-btn py-2 rounded-xl text-xs font-extrabold bg-[#0b1120] hover:bg-gray-800 text-gray-300 border border-gray-800';
+      });
+
+      document.getElementById('compat-selected-badge').textContent = info.group;
+      document.getElementById('compat-antigen-info').innerHTML =
+        `RBC Antigens: <strong>${info.antigens}</strong> • Plasma Antibodies: <strong>${info.antibodies}</strong>`;
+
+      const donateEl = document.getElementById('compat-donate-list');
+      donateEl.innerHTML = info.donateTo.map(g =>
+        `<span class="px-2.5 py-0.5 rounded-md bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 text-xs font-bold">${g}</span>`
+      ).join('');
+
+      const receiveEl = document.getElementById('compat-receive-list');
+      receiveEl.innerHTML = info.receiveFrom.map(g =>
+        `<span class="px-2.5 py-0.5 rounded-md bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 text-xs font-bold">${g}</span>`
+      ).join('');
+    }
+
+    function drawBloodChart() {
+      const canvas = document.getElementById('blood-chart-canvas');
+      if (!canvas) return;
+      const rect = canvas.parentElement.getBoundingClientRect();
+      const dpr = window.devicePixelRatio || 1;
+      canvas.width = Math.max(300, rect.width - 16) * dpr;
+      canvas.height = Math.max(220, rect.height - 16) * dpr;
+
+      const ctx = canvas.getContext('2d');
+      ctx.scale(dpr, dpr);
+      const w = canvas.width / dpr;
+      const h = canvas.height / dpr;
+
+      ctx.clearRect(0, 0, w, h);
+      chartHitRegions = [];
+
+      const padLeft = 44;
+      const padRight = 16;
+      const padTop = 26;
+      const padBottom = 38;
+      const plotW = w - padLeft - padRight;
+      const plotH = h - padTop - padBottom;
+      const maxPct = 40;
+
+      // Grid lines
+      ctx.strokeStyle = 'rgba(148, 163, 184, 0.14)';
+      ctx.lineWidth = 1;
+      ctx.font = '11px JetBrains Mono, monospace';
+      ctx.fillStyle = '#94a3b8';
+      ctx.textAlign = 'right';
+
+      for (let p = 0; p <= maxPct; p += 10) {
+        const y = padTop + plotH - (p / maxPct) * plotH;
+        ctx.beginPath();
+        ctx.moveTo(padLeft, y);
+        ctx.lineTo(w - padRight, y);
+        ctx.stroke();
+        ctx.fillText(`${p}%`, padLeft - 8, y + 4);
+      }
+
+      const slotW = plotW / bloodGroupData.length;
+      const barW = Math.min(42, slotW * 0.62);
+
+      bloodGroupData.forEach((item, idx) => {
+        const barH = Math.max(4, (item.pct / maxPct) * plotH);
+        const x = padLeft + idx * slotW + (slotW - barW) / 2;
+        const y = padTop + plotH - barH;
+
+        const grad = ctx.createLinearGradient(x, y, x, padTop + plotH);
+        grad.addColorStop(0, item.color);
+        grad.addColorStop(1, item.color + '44');
+
+        ctx.fillStyle = grad;
+        ctx.beginPath();
+        ctx.roundRect(x, y, barW, barH, [6, 6, 0, 0]);
+        ctx.fill();
+
+        ctx.strokeStyle = item.color;
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+
+        ctx.fillStyle = '#f8fafc';
+        ctx.font = 'bold 10px JetBrains Mono, monospace';
+        ctx.textAlign = 'center';
+        ctx.fillText(`${item.pct}%`, x + barW / 2, y - 6);
+
+        ctx.fillStyle = '#e2e8f0';
+        ctx.font = 'bold 12px Inter, sans-serif';
+        ctx.fillText(item.group, x + barW / 2, padTop + plotH + 18);
+
+        chartHitRegions.push({ x, y: padTop, w: barW, h: plotH, item });
+      });
+    }
+
+    function setupChartHover() {
+      const canvas = document.getElementById('blood-chart-canvas');
+      const tooltip = document.getElementById('chart-tooltip');
+
+      function handlePointer(clientX, clientY) {
+        const rect = canvas.getBoundingClientRect();
+        const x = clientX - rect.left;
+        const y = clientY - rect.top;
+
+        const hit = chartHitRegions.find(r => x >= r.x && x <= r.x + r.w && y >= r.y && y <= r.y + r.h);
+        if (hit) {
+          tooltip.innerHTML = `
+            <div class="font-bold text-white mb-0.5" style="color:${hit.item.color}">Blood Group ${hit.item.group} (${hit.item.pct}%)</div>
+            <div class="text-gray-300">RBC Antigens: <strong>${hit.item.antigens}</strong></div>
+            <div class="text-cyan-300 text-[11px]">Antibodies: ${hit.item.antibodies}</div>
+          `;
+          tooltip.style.left = `${Math.min(rect.width - 210, Math.max(10, x + 12))}px`;
+          tooltip.style.top = `${Math.max(10, y - 48)}px`;
+          tooltip.classList.remove('hidden');
+        } else {
+          tooltip.classList.add('hidden');
+        }
+      }
+
+      canvas.addEventListener('mousemove', (e) => handlePointer(e.clientX, e.clientY));
+      canvas.addEventListener('click', (e) => {
+        handlePointer(e.clientX, e.clientY);
+        const rect = canvas.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const hit = chartHitRegions.find(r => x >= r.x && x <= r.x + r.w);
+        if (hit) {
+          selectedCompatGroup = hit.item.group;
+          updateCompatibilityUI();
+        }
+      });
+      canvas.addEventListener('mouseleave', () => tooltip.classList.add('hidden'));
+    }
+
+    /**
+     * =========================================================================
+     * PART 2: SPECIMEN & AGGLUTINATION PHOTO GALLERY (6 PLATES)
+     * =========================================================================
+     */
+    const galleryPlates = [
+      {
+        id: 'fig1',
+        fig: 'FIG 01 • LANCET COLLECTION',
+        mag: '1.5x Lab Photo',
+        scale: '10 mm',
+        title: 'Fig 1. Sterile Lancet Finger-Prick & Capillary Blood Drop',
+        caption: 'After cleaning the left ring fingertip with a 70% alcohol swab, a single-use sterile blood lancet makes a quick, shallow prick to obtain a clean drop of capillary blood.'
+      },
+      {
+        id: 'fig2',
+        fig: 'FIG 02 • SLIDE AGGLUTINATION',
+        mag: '2.0x Slide View',
+        scale: '15 mm',
+        title: 'Fig 2. Blood Typing Slide Result (Example: Blood Group A+)',
+        caption: 'Three blood drops mixed with Anti-A (blue), Anti-B (yellow), and Anti-D (clear). Visible red clumps in circles A and D with smooth suspension in circle B confirm Blood Group A+.'
+      },
+      {
+        id: 'fig3',
+        fig: 'FIG 03 • NORMAL RBC SMEAR',
+        mag: '400x Microscope',
+        scale: '20 µm',
+        title: 'Fig 3. Normal Unclumped Red Blood Cells (Negative Reaction)',
+        caption: 'Under 400x magnification, when no matching antibody is present, biconcave disc-shaped Red Blood Cells remain evenly separated and smooth.'
+      },
+      {
+        id: 'fig4',
+        fig: 'FIG 04 • AGGLUTINATION 400x',
+        mag: '400x Microscope',
+        scale: '20 µm',
+        title: 'Fig 4. Agglutinated (Clumped) RBCs (Positive Reaction)',
+        caption: 'Under 400x magnification, matching antibodies cross-link adjacent Red Blood Cells into tight, irregular clusters (agglutination).'
+      },
+      {
+        id: 'fig5',
+        fig: 'FIG 05 • 8-GROUP REFERENCE',
+        mag: 'Chart Plate',
+        scale: 'Ref Card',
+        title: 'Fig 5. Visual Slide Pattern Guide for All 8 ABO & Rh Groups',
+        caption: 'Quick comparison chart showing clumping patterns across Anti-A, Anti-B, and Anti-D wells for A+, A−, B+, B−, AB+, AB−, O+, and O−.'
+      },
+      {
+        id: 'fig6',
+        fig: 'FIG 06 • RBC ANTIGEN DIAGRAM',
+        mag: 'Schematic 1000x',
+        scale: '5 µm',
+        title: 'Fig 6. Red Blood Cell Surface Antigens (A, B, AB, and O)',
+        caption: 'Class 10 structural comparison showing Antigen A, Antigen B, both antigens on Group AB, and absence of A/B antigens on Group O RBCs.'
+      }
+    ];
+
+    function mulberry32(a) {
+      return function() {
+        let t = a += 0x6D2B79F5;
+        t = Math.imul(t ^ (t >>> 15), t | 1);
+        t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+        return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+      };
+    }
+
+    function renderMicrographToCanvas(canvas, plateId) {
+      const ctx = canvas.getContext('2d');
+      const w = canvas.width;
+      const h = canvas.height;
+      const plate = galleryPlates.find(p => p.id === plateId);
+      const rand = mulberry32(plateId.charCodeAt(3) * 7919);
+
+      ctx.save();
+      ctx.clearRect(0, 0, w, h);
+
+      if (plateId === 'fig1') {
+        // Sterile lancet + fingertip with blood drop
+        ctx.fillStyle = '#0f172a';
+        ctx.fillRect(0, 0, w, h);
+
+        // Finger illustration
+        const skinGrad = ctx.createLinearGradient(w * 0.12, h * 0.4, w * 0.55, h * 0.75);
+        skinGrad.addColorStop(0, '#eab696');
+        skinGrad.addColorStop(1, '#c98a67');
+        ctx.fillStyle = skinGrad;
+        ctx.beginPath();
+        ctx.roundRect(w * 0.08, h * 0.46, w * 0.44, h * 0.24, [0, 65, 65, 0]);
+        ctx.fill();
+
+        // Fingernail
+        ctx.fillStyle = 'rgba(255, 237, 224, 0.55)';
+        ctx.beginPath();
+        ctx.roundRect(w * 0.41, h * 0.48, w * 0.09, h * 0.08, 14);
+        ctx.fill();
+
+        // Bright red capillary blood drop on fingertip
+        const bx = w * 0.49, by = h * 0.63;
+        const dropGrad = ctx.createRadialGradient(bx - 4, by - 4, 2, bx, by, 18);
+        dropGrad.addColorStop(0, '#fb7185');
+        dropGrad.addColorStop(0.5, '#e11d48');
+        dropGrad.addColorStop(1, '#881337');
+        ctx.fillStyle = dropGrad;
+        ctx.beginPath();
+        ctx.arc(bx, by, 16, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Sterile Plastic Lancet Body
+        ctx.save();
+        ctx.translate(w * 0.68, h * 0.42);
+        ctx.rotate(-0.45);
+        ctx.fillStyle = '#0284c7';
+        ctx.beginPath();
+        ctx.roundRect(-55, -18, 120, 36, 10);
+        ctx.fill();
+        ctx.strokeStyle = '#38bdf8';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        // Sterile metal needle tip
+        ctx.fillStyle = '#e2e8f0';
+        ctx.beginPath();
+        ctx.moveTo(-55, -3);
+        ctx.lineTo(-82, 0);
+        ctx.lineTo(-55, 3);
+        ctx.closePath();
+        ctx.fill();
+
+        ctx.fillStyle = '#ffffff';
+        ctx.font = 'bold 11px JetBrains Mono, monospace';
+        ctx.fillText('STERILE LANCET', -42, 4);
+        ctx.restore();
+
+      } else if (plateId === 'fig2') {
+        // Glass Slide with 3 circles showing A+ result
+        ctx.fillStyle = '#0f172a';
+        ctx.fillRect(0, 0, w, h);
+
+        const sx = w * 0.1, sy = h * 0.28, sw = w * 0.8, sh = h * 0.44;
+        ctx.fillStyle = 'rgba(224, 242, 254, 0.15)';
+        ctx.fillRect(sx, sy, sw, sh);
+        ctx.strokeStyle = 'rgba(186, 230, 253, 0.65)';
+        ctx.lineWidth = 2.5;
+        ctx.strokeRect(sx, sy, sw, sh);
+
+        const wells = [
+          { label: 'Anti-A (Blue)', cx: w * 0.26, tint: 'rgba(56, 189, 248, 0.25)', clump: true, res: '+ CLUMPS' },
+          { label: 'Anti-B (Yellow)', cx: w * 0.50, tint: 'rgba(250, 204, 21, 0.25)', clump: false, res: '− SMOOTH' },
+          { label: 'Anti-D (Rh)', cx: w * 0.74, tint: 'rgba(226, 232, 240, 0.18)', clump: true, res: '+ CLUMPS' }
+        ];
+
+        wells.forEach(well => {
+          const cy = h * 0.5;
+          ctx.strokeStyle = '#94a3b8';
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          ctx.arc(well.cx, cy, 46, 0, Math.PI * 2);
+          ctx.stroke();
+
+          ctx.fillStyle = well.tint;
+          ctx.beginPath();
+          ctx.arc(well.cx, cy, 42, 0, Math.PI * 2);
+          ctx.fill();
+
+          if (well.clump) {
+            // Clumped granules
+            for (let k = 0; k < 28; k++) {
+              const ang = rand() * Math.PI * 2;
+              const rad = rand() * 30;
+              ctx.fillStyle = k % 2 === 0 ? '#9f1239' : '#e11d48';
+              ctx.beginPath();
+              ctx.arc(well.cx + Math.cos(ang) * rad, cy + Math.sin(ang) * rad, 3.2 + rand() * 3, 0, Math.PI * 2);
+              ctx.fill();
+            }
+          } else {
+            // Smooth uniform red drop
+            ctx.fillStyle = 'rgba(225, 29, 72, 0.78)';
+            ctx.beginPath();
+            ctx.arc(well.cx, cy, 34, 0, Math.PI * 2);
+            ctx.fill();
+          }
+
+          ctx.fillStyle = '#f8fafc';
+          ctx.font = 'bold 12px Inter, sans-serif';
+          ctx.textAlign = 'center';
+          ctx.fillText(well.label, well.cx, sy - 10);
+          ctx.fillStyle = well.clump ? '#fb7185' : '#34d399';
+          ctx.font = 'bold 11px JetBrains Mono, monospace';
+          ctx.fillText(well.res, well.cx, sy + sh + 18);
+        });
+
+      } else if (plateId === 'fig3' || plateId === 'fig4') {
+        // 400x Brightfield RBC Smear (Normal vs Agglutinated)
+        const bg = ctx.createRadialGradient(w / 2, h / 2, 30, w / 2, h / 2, w * 0.65);
+        bg.addColorStop(0, '#fff1f2');
+        bg.addColorStop(1, '#fecdd3');
+        ctx.fillStyle = bg;
+        ctx.fillRect(0, 0, w, h);
+
+        if (plateId === 'fig3') {
+          // Evenly dispersed biconcave RBCs
+          for (let i = 0; i < 65; i++) {
+            const x = 40 + rand() * (w - 80);
+            const y = 40 + rand() * (h - 80);
+            ctx.fillStyle = '#e11d48';
+            ctx.beginPath();
+            ctx.arc(x, y, 14, 0, Math.PI * 2);
+            ctx.fill();
+            // Pale biconcave center
+            ctx.fillStyle = '#fda4af';
+            ctx.beginPath();
+            ctx.arc(x, y, 6, 0, Math.PI * 2);
+            ctx.fill();
+          }
+        } else {
+          // Clumped clusters of RBCs
+          const centers = [
+            { x: w * 0.28, y: h * 0.36 },
+            { x: w * 0.65, y: h * 0.34 },
+            { x: w * 0.46, y: h * 0.68 },
+            { x: w * 0.76, y: h * 0.66 }
+          ];
+          centers.forEach(c => {
+            for (let i = 0; i < 24; i++) {
+              const ang = rand() * Math.PI * 2;
+              const dist = rand() * 44;
+              const rx = c.x + Math.cos(ang) * dist;
+              const ry = c.y + Math.sin(ang) * dist;
+              ctx.fillStyle = '#be123c';
+              ctx.beginPath();
+              ctx.arc(rx, ry, 13, 0, Math.PI * 2);
+              ctx.fill();
+              ctx.strokeStyle = '#881337';
+              ctx.lineWidth = 1.5;
+              ctx.stroke();
+            }
+          });
+        }
+      } else if (plateId === 'fig5') {
+        // 8-group slide matrix
+        ctx.fillStyle = '#0f172a';
+        ctx.fillRect(0, 0, w, h);
+
+        const groups = [
+          { g: 'A+', a: 1, b: 0, d: 1 },
+          { g: 'A−', a: 1, b: 0, d: 0 },
+          { g: 'B+', a: 0, b: 1, d: 1 },
+          { g: 'B−', a: 0, b: 1, d: 0 },
+          { g: 'AB+', a: 1, b: 1, d: 1 },
+          { g: 'AB−', a: 1, b: 1, d: 0 },
+          { g: 'O+', a: 0, b: 0, d: 1 },
+          { g: 'O−', a: 0, b: 0, d: 0 }
+        ];
+
+        groups.forEach((item, idx) => {
+          const col = idx % 2;
+          const row = Math.floor(idx / 2);
+          const bx = 35 + col * (w * 0.47);
+          const by = 56 + row * 78;
+
+          ctx.fillStyle = '#1e293b';
+          ctx.beginPath();
+          ctx.roundRect(bx, by, w * 0.43, 62, 10);
+          ctx.fill();
+
+          ctx.fillStyle = '#34d399';
+          ctx.font = 'bold 15px JetBrains Mono, monospace';
+          ctx.textAlign = 'left';
+          ctx.fillText(item.g, bx + 16, by + 36);
+
+          [item.a, item.b, item.d].forEach((clump, wi) => {
+            const cx = bx + 95 + wi * 62;
+            const cy = by + 31;
+            ctx.fillStyle = clump ? '#e11d48' : 'rgba(244, 63, 94, 0.4)';
+            ctx.beginPath();
+            ctx.arc(cx, cy, 16, 0, Math.PI * 2);
+            ctx.fill();
+            if (clump) {
+              ctx.fillStyle = '#881337';
+              ctx.beginPath();
+              ctx.arc(cx - 5, cy - 4, 4, 0, Math.PI * 2);
+              ctx.arc(cx + 5, cy + 3, 4, 0, Math.PI * 2);
+              ctx.arc(cx + 2, cy - 5, 3.5, 0, Math.PI * 2);
+              ctx.fill();
+            }
+          });
+        });
+      } else {
+        // Fig 6: Schematic of RBC Surface Antigens
+        ctx.fillStyle = '#0f172a';
+        ctx.fillRect(0, 0, w, h);
+
+        const types = [
+          { name: 'Group A RBC', color: '#10b981', shape: 'tri' },
+          { name: 'Group B RBC', color: '#06b6d4', shape: 'circle' },
+          { name: 'Group AB RBC', color: '#a855f7', shape: 'both' },
+          { name: 'Group O RBC', color: '#f43f5e', shape: 'none' }
+        ];
+
+        types.forEach((t, idx) => {
+          const cx = w * (0.16 + idx * 0.225);
+          const cy = h * 0.5;
+          const r = 44;
+
+          ctx.fillStyle = '#e11d48';
+          ctx.beginPath();
+          ctx.arc(cx, cy, r, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.fillStyle = '#be123c';
+          ctx.beginPath();
+          ctx.arc(cx, cy, 22, 0, Math.PI * 2);
+          ctx.fill();
+
+          if (t.shape !== 'none') {
+            for (let k = 0; k < 8; k++) {
+              const ang = (k / 8) * Math.PI * 2;
+              const ax = cx + Math.cos(ang) * (r + 8);
+              const ay = cy + Math.sin(ang) * (r + 8);
+              ctx.fillStyle = (t.shape === 'both' && k % 2 === 1) ? '#06b6d4' : t.color;
+              ctx.beginPath();
+              ctx.arc(ax, ay, 6, 0, Math.PI * 2);
+              ctx.fill();
+            }
+          }
+
+          ctx.fillStyle = '#f8fafc';
+          ctx.font = 'bold 12px Inter, sans-serif';
+          ctx.textAlign = 'center';
+          ctx.fillText(t.name, cx, cy + 78);
+        });
+      }
+
+      // HUD Stamp & Scale Bar
+      ctx.fillStyle = 'rgba(11, 17, 32, 0.85)';
+      ctx.fillRect(14, 14, 175, 26);
+      ctx.fillStyle = '#34d399';
+      ctx.font = 'bold 11px JetBrains Mono, monospace';
+      ctx.textAlign = 'left';
+      ctx.fillText(`DIGITALCLASSES • ${plate.mag}`, 22, 31);
+
+      const sbW = 86;
+      const sbX = w - sbW - 22;
+      const sbY = h - 24;
+      ctx.fillStyle = 'rgba(11, 17, 32, 0.85)';
+      ctx.fillRect(sbX - 10, sbY - 22, sbW + 20, 32);
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(sbX, sbY - 4, sbW, 4);
+      ctx.font = 'bold 11px JetBrains Mono, monospace';
+      ctx.textAlign = 'center';
+      ctx.fillText(plate.scale, sbX + sbW / 2, sbY - 9);
+
+      ctx.restore();
+    }
+
+    function initPhotoGallery() {
+      const grid = document.getElementById('gallery-grid');
+      grid.innerHTML = '';
+
+      galleryPlates.forEach(plate => {
+        const card = document.createElement('div');
+        card.className = 'photo-card bg-[#111827] border border-gray-800 rounded-2xl overflow-hidden shadow-lg cursor-pointer flex flex-col justify-between';
+        card.innerHTML = `
+          <div>
+            <div class="relative bg-black aspect-[16/10] overflow-hidden border-b border-gray-800">
+              <canvas id="canvas-${plate.id}" width="640" height="400" class="w-full h-full object-cover block"></canvas>
+            </div>
+            <div class="p-4">
+              <div class="flex items-center justify-between text-[11px] font-mono text-cyan-400 mb-1">
+                <span>${plate.fig}</span>
+                <span class="text-emerald-400">Click to Enlarge 🔍</span>
+              </div>
+              <h4 class="text-sm font-bold text-white leading-snug">${plate.title}</h4>
+              <p class="text-xs text-gray-400 mt-1.5 line-clamp-2">${plate.caption}</p>
+            </div>
+          </div>
+        `;
+        card.addEventListener('click', () => openLightbox(plate));
+        grid.appendChild(card);
+        renderMicrographToCanvas(card.querySelector('canvas'), plate.id);
+      });
+
+      document.getElementById('lightbox-close').addEventListener('click', () => {
+        document.getElementById('photo-lightbox').classList.add('hidden');
+      });
+      document.getElementById('photo-lightbox').addEventListener('click', (e) => {
+        if (e.target.id === 'photo-lightbox') {
+          document.getElementById('photo-lightbox').classList.add('hidden');
+        }
+      });
+    }
+
+    function openLightbox(plate) {
+      document.getElementById('lightbox-badge').textContent = `${plate.fig} • ${plate.mag}`;
+      document.getElementById('lightbox-title').textContent = plate.title;
+      document.getElementById('lightbox-caption').textContent = plate.caption;
+      renderMicrographToCanvas(document.getElementById('lightbox-canvas'), plate.id);
+      document.getElementById('photo-lightbox').classList.remove('hidden');
+    }
+
+    /**
+     * =========================================================================
+     * PART 3: INTERACTIVE 3D LANCET BLOOD TYPING LAB (THREE.JS WEBGL)
+     * Mode A: 3D Sterile Lancet Finger-Prick & Glass Slide Agglutination Test
+     * Mode B: 3D Red Blood Cell & Surface Antigen Explorer
+     * =========================================================================
+     */
+    let scene, camera, renderer;
+    let current3DMode = 'lancet'; // 'lancet' or 'rbc'
+    let autoRotate = false;
+    let showLabels = false; // OFF by default until user clicks 3D Labels
+
+    // Orbit Camera Spherical Coordinates
+    const defaultCamState = { radius: 11.8, theta: 0.36, phi: 0.88, targetY: 0.35 };
+    let camState = { ...defaultCamState };
+    let isDragging = false;
+    let prevPointer = { x: 0, y: 0 };
+
+    // Mode A (Lancet Blood Test) State & Meshes
+    let lancetGroup;
+    let currentBloodSample = 'A+';
+    let actualMysteryGroup = 'B+';
+    let practicalStep = 0; // 0..5
+    let autoPlayTimer = null;
+
+    let swabMesh, lancetMesh, fingerBloodDrop;
+    let slideBloodDrops = { A: null, B: null, D: null };
+    let serumDrops = { A: null, B: null, D: null };
+    let clumpMeshes = { A: [], B: [], D: [] };
+    let toothpicks = [];
+
+    // Mode B (3D Red Blood Cell) State & Meshes
+    let rbcGroup;
+    let currentRBCType = 'A+';
+    let showAntibodies = false;
+    let antigenMeshes = [];
+    let antibodyMeshes = [];
+
+    // Floating 3D Callout Anchor Objects
+    let calloutAnchors = [];
+
+    const bloodReactions = {
+      'A+':  { A: true,  B: false, D: true  },
+      'A-':  { A: true,  B: false, D: false },
+      'B+':  { A: false, B: true,  D: true  },
+      'B-':  { A: false, B: true,  D: false },
+      'AB+': { A: true,  B: true,  D: true  },
+      'AB-': { A: true,  B: true,  D: false },
+      'O+':  { A: false, B: false, D: true  },
+      'O-':  { A: false, B: false, D: false }
+    };
+
+    function getActiveGroup() {
+      return currentBloodSample === 'MYSTERY' ? actualMysteryGroup : currentBloodSample;
+    }
+
+    function init3DScene() {
+      const container = document.getElementById('three-container');
+      const w = container.clientWidth;
+      const h = container.clientHeight;
+
+      scene = new THREE.Scene();
+      scene.fog = new THREE.FogExp2('#070b14', 0.024);
+
+      camera = new THREE.PerspectiveCamera(44, w / h, 0.1, 100);
+      updateCameraFromSpherical();
+
+      renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+      renderer.setSize(w, h);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+      renderer.shadowMap.enabled = true;
+      renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+      container.insertBefore(renderer.domElement, container.firstChild);
+
+      // Studio Lighting
+      const ambientLight = new THREE.AmbientLight('#cbd5e1', 0.65);
+      scene.add(ambientLight);
+
+      const keyLight = new THREE.DirectionalLight('#ffffff', 0.95);
+      keyLight.position.set(6, 12, 8);
+      keyLight.castShadow = true;
+      scene.add(keyLight);
+
+      const rimLight = new THREE.DirectionalLight('#38bdf8', 0.45);
+      rimLight.position.set(-7, 6, -6);
+      scene.add(rimLight);
+
+      buildLancetLabScene();
+      buildRBCExplorerScene();
+
+      set3DMode('lancet');
+      setupOrbitControls(container);
+      setup3DControlsUI();
+      drawEyepiecePIP();
+    }
+
+    function updateCameraFromSpherical() {
+      const sinPhi = Math.sin(camState.phi);
+      camera.position.x = camState.radius * sinPhi * Math.sin(camState.theta);
+      camera.position.y = camState.targetY + camState.radius * Math.cos(camState.phi);
+      camera.position.z = camState.radius * sinPhi * Math.cos(camState.theta);
+      camera.lookAt(0, camState.targetY, 0);
+    }
+
+    function makeTextSprite(text, bgColor, textColor) {
+      const canvas = document.createElement('canvas');
+      canvas.width = 256;
+      canvas.height = 64;
+      const ctx = canvas.getContext('2d');
+      ctx.fillStyle = bgColor;
+      ctx.beginPath();
+      ctx.roundRect(8, 8, 240, 48, 12);
+      ctx.fill();
+      ctx.fillStyle = textColor;
+      ctx.font = 'bold 26px Inter, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(text, 128, 33);
+
+      const tex = new THREE.CanvasTexture(canvas);
+      const mat = new THREE.SpriteMaterial({ map: tex, transparent: true });
+      const sprite = new THREE.Sprite(mat);
+      sprite.scale.set(1.5, 0.38, 1);
+      return sprite;
+    }
+
+    function buildLancetLabScene() {
+      lancetGroup = new THREE.Group();
+      scene.add(lancetGroup);
+
+      // Lab Table Surface
+      const benchMat = new THREE.MeshStandardMaterial({ color: '#0f172a', roughness: 0.7, metalness: 0.1 });
+      const bench = new THREE.Mesh(new THREE.BoxGeometry(16, 0.4, 11), benchMat);
+      bench.position.y = -0.2;
+      bench.receiveShadow = true;
+      lancetGroup.add(bench);
+
+      // Blue Sterile Lab Mat (Spacious layout)
+      const matMesh = new THREE.Mesh(
+        new THREE.BoxGeometry(11.6, 0.04, 6.8),
+        new THREE.MeshStandardMaterial({ color: '#0e7490', roughness: 0.85 })
+      );
+      matMesh.position.set(0, 0.02, 0.1);
+      matMesh.receiveShadow = true;
+      lancetGroup.add(matMesh);
+
+      // 1. Glass Microscope Slide with 3 Circles (A, B, D)
+      const slideMat = new THREE.MeshPhysicalMaterial({
+        color: '#e0f2fe',
+        transparent: true,
+        opacity: 0.45,
+        roughness: 0.1,
+        metalness: 0.05
+      });
+      const slide = new THREE.Mesh(new THREE.BoxGeometry(6.0, 0.1, 2.1), slideMat);
+      slide.position.set(0.2, 0.1, 1.05);
+      lancetGroup.add(slide);
+
+      // White frosted label on slide left
+      const frosted = new THREE.Mesh(
+        new THREE.BoxGeometry(1.0, 0.11, 1.95),
+        new THREE.MeshStandardMaterial({ color: '#f1f5f9', roughness: 0.6 })
+      );
+      frosted.position.set(-2.2, 0.1, 1.05);
+      lancetGroup.add(frosted);
+
+      const wellPositions = [
+        { key: 'A', x: -0.85, label: 'Anti-A', color: '#0284c7' },
+        { key: 'B', x: 0.55,  label: 'Anti-B', color: '#eab308' },
+        { key: 'D', x: 1.95,  label: 'Anti-D', color: '#94a3b8' }
+      ];
+
+      wellPositions.forEach(w => {
+        // Ring border on slide
+        const ring = new THREE.Mesh(
+          new THREE.RingGeometry(0.44, 0.5, 32),
+          new THREE.MeshBasicMaterial({ color: '#38bdf8', side: THREE.DoubleSide })
+        );
+        ring.rotation.x = -Math.PI / 2;
+        ring.position.set(w.x, 0.16, 1.05);
+        lancetGroup.add(ring);
+
+        // Label sprite above well
+        const sprite = makeTextSprite(w.label, 'rgba(15,23,42,0.9)', '#f8fafc');
+        sprite.position.set(w.x, 0.46, 0.22);
+        lancetGroup.add(sprite);
+
+        // Blood Drop in Well (hidden until Step 3)
+        const bDrop = new THREE.Mesh(
+          new THREE.SphereGeometry(0.33, 24, 16),
+          new THREE.MeshPhysicalMaterial({ color: '#dc2626', roughness: 0.25, clearcoat: 0.8 })
+        );
+        bDrop.scale.set(1.15, 0.28, 1.15);
+        bDrop.position.set(w.x, 0.18, 1.05);
+        bDrop.visible = false;
+        lancetGroup.add(bDrop);
+        slideBloodDrops[w.key] = bDrop;
+
+        // Antiserum Drop in Well (hidden until Step 4)
+        const sDrop = new THREE.Mesh(
+          new THREE.SphereGeometry(0.37, 24, 16),
+          new THREE.MeshPhysicalMaterial({ color: w.color, transparent: true, opacity: 0.55, roughness: 0.15 })
+        );
+        sDrop.scale.set(1.18, 0.22, 1.18);
+        sDrop.position.set(w.x, 0.21, 1.05);
+        sDrop.visible = false;
+        lancetGroup.add(sDrop);
+        serumDrops[w.key] = sDrop;
+
+        // Clump granules inside well (hidden until Step 5 if positive reaction)
+        clumpMeshes[w.key] = [];
+        for (let k = 0; k < 18; k++) {
+          const ang = (k / 18) * Math.PI * 2 + (k * 0.7);
+          const rad = 0.06 + (k % 4) * 0.075;
+          const granule = new THREE.Mesh(
+            new THREE.SphereGeometry(0.055, 10, 10),
+            new THREE.MeshStandardMaterial({ color: '#881337', roughness: 0.4 })
+          );
+          granule.position.set(
+            w.x + Math.cos(ang) * rad,
+            0.22,
+            1.05 + Math.sin(ang) * rad
+          );
+          granule.visible = false;
+          lancetGroup.add(granule);
+          clumpMeshes[w.key].push(granule);
+        }
+      });
+
+      // 2. Left Ring Finger Model (Spaced cleanly on upper-left of tray)
+      const skinMat = new THREE.MeshStandardMaterial({ color: '#e0a988', roughness: 0.55 });
+      const fingerGroup = new THREE.Group();
+      fingerGroup.position.set(-3.1, 0.65, -1.55);
+      fingerGroup.rotation.y = 0.35;
+      lancetGroup.add(fingerGroup);
+
+      const fingerCyl = new THREE.Mesh(new THREE.CylinderGeometry(0.34, 0.38, 2.2, 24), skinMat);
+      fingerCyl.rotation.z = -Math.PI / 2;
+      fingerCyl.castShadow = true;
+      fingerGroup.add(fingerCyl);
+
+      const fingerTip = new THREE.Mesh(new THREE.SphereGeometry(0.34, 24, 20), skinMat);
+      fingerTip.position.set(1.1, 0, 0);
+      fingerGroup.add(fingerTip);
+
+      // Capillary blood drop on fingertip (appears at Step 2)
+      fingerBloodDrop = new THREE.Mesh(
+        new THREE.SphereGeometry(0.14, 18, 18),
+        new THREE.MeshPhysicalMaterial({ color: '#e11d48', roughness: 0.15, clearcoat: 1.0 })
+      );
+      fingerBloodDrop.position.set(1.22, 0.26, 0.12);
+      fingerBloodDrop.visible = false;
+      fingerGroup.add(fingerBloodDrop);
+
+      // 3. 70% Alcohol Swab Pad
+      swabMesh = new THREE.Mesh(
+        new THREE.BoxGeometry(0.88, 0.08, 0.88),
+        new THREE.MeshStandardMaterial({ color: '#f8fafc', roughness: 0.9 })
+      );
+      swabMesh.position.set(-3.9, 0.08, 1.15);
+      lancetGroup.add(swabMesh);
+
+      // 4. Sterile Spring-Loaded Blood Lancet
+      lancetMesh = new THREE.Group();
+      lancetMesh.position.set(-0.85, 0.25, -1.9);
+      lancetGroup.add(lancetMesh);
+
+      const lancetBody = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.22, 0.26, 1.5, 20),
+        new THREE.MeshStandardMaterial({ color: '#0284c7', roughness: 0.3 })
+      );
+      lancetBody.rotation.z = Math.PI / 2;
+      lancetMesh.add(lancetBody);
+
+      const lancetTip = new THREE.Mesh(
+        new THREE.ConeGeometry(0.06, 0.35, 16),
+        new THREE.MeshStandardMaterial({ color: '#e2e8f0', metalness: 0.85, roughness: 0.2 })
+      );
+      lancetTip.rotation.z = Math.PI / 2;
+      lancetTip.position.set(-0.9, 0, 0);
+      lancetMesh.add(lancetTip);
+
+      // 5. Three Color-Coded Reagent Dropper Bottles (Anti-A, Anti-B, Anti-D)
+      const bottles = [
+        { x: 1.35, color: '#0284c7', name: 'Anti-A' },
+        { x: 2.55, color: '#eab308', name: 'Anti-B' },
+        { x: 3.75, color: '#e2e8f0', name: 'Anti-D' }
+      ];
+      bottles.forEach(b => {
+        const bGroup = new THREE.Group();
+        bGroup.position.set(b.x, 0.04, -1.85);
+
+        const body = new THREE.Mesh(
+          new THREE.CylinderGeometry(0.32, 0.32, 1.15, 20),
+          new THREE.MeshPhysicalMaterial({ color: b.color, transparent: true, opacity: 0.82, roughness: 0.2 })
+        );
+        body.position.y = 0.58;
+        bGroup.add(body);
+
+        const cap = new THREE.Mesh(
+          new THREE.ConeGeometry(0.22, 0.45, 20),
+          new THREE.MeshStandardMaterial({ color: '#f8fafc', roughness: 0.4 })
+        );
+        cap.position.y = 1.38;
+        bGroup.add(cap);
+
+        lancetGroup.add(bGroup);
+      });
+
+      // 6. Three Wooden Mixing Toothpicks (used in Step 5)
+      toothpicks = [];
+      [-0.85, 0.55, 1.95].forEach((wx, idx) => {
+        const stick = new THREE.Mesh(
+          new THREE.CylinderGeometry(0.025, 0.025, 1.35, 10),
+          new THREE.MeshStandardMaterial({ color: '#fde68a', roughness: 0.7 })
+        );
+        stick.position.set(4.15 + idx * 0.24, 0.08, 1.05);
+        stick.rotation.x = Math.PI / 2;
+        lancetGroup.add(stick);
+        toothpicks.push({ mesh: stick, targetX: wx });
+      });
+    }
+
+    function buildRBCExplorerScene() {
+      rbcGroup = new THREE.Group();
+      scene.add(rbcGroup);
+
+      // Biconcave Red Blood Cell Mesh (LatheGeometry profile)
+      const pts = [];
+      for (let i = 0; i <= 24; i++) {
+        const t = (i / 24) * Math.PI;
+        const r = Math.sin(t) * 2.4;
+        // Biconcave indentation near center
+        const thickness = (0.35 + 0.65 * Math.pow(Math.sin(t), 1.6)) * 0.85;
+        const y = Math.cos(t) * thickness;
+        pts.push(new THREE.Vector2(r, y));
+      }
+      const rbcGeo = new THREE.LatheGeometry(pts, 48);
+      const rbcMat = new THREE.MeshPhysicalMaterial({
+        color: '#e11d48',
+        roughness: 0.35,
+        metalness: 0.05,
+        clearcoat: 0.4
+      });
+      const rbcMesh = new THREE.Mesh(rbcGeo, rbcMat);
+      rbcGroup.add(rbcMesh);
+
+      updateRBCModelVisuals();
+    }
+
+    function updateRBCModelVisuals() {
+      // Remove previous antigens & antibodies
+      antigenMeshes.forEach(m => rbcGroup.remove(m));
+      antibodyMeshes.forEach(m => rbcGroup.remove(m));
+      antigenMeshes = [];
+      antibodyMeshes = [];
+
+      const hasA = currentRBCType === 'A+' || currentRBCType === 'AB+';
+      const hasB = currentRBCType === 'B+' || currentRBCType === 'AB+';
+      const hasRh = currentRBCType !== 'O-';
+
+      const count = 16;
+      for (let i = 0; i < count; i++) {
+        const ang = (i / count) * Math.PI * 2;
+        const rx = Math.cos(ang) * 2.42;
+        const rz = Math.sin(ang) * 2.42;
+
+        let antigenType = null;
+        if (hasA && hasB) {
+          antigenType = i % 2 === 0 ? 'A' : 'B';
+        } else if (hasA) {
+          antigenType = 'A';
+        } else if (hasB) {
+          antigenType = 'B';
+        } else if (hasRh && i % 2 === 0) {
+          antigenType = 'Rh';
+        }
+
+        if (antigenType) {
+          let geo, color;
+          if (antigenType === 'A') {
+            geo = new THREE.ConeGeometry(0.18, 0.42, 12);
+            color = '#10b981';
+          } else if (antigenType === 'B') {
+            geo = new THREE.SphereGeometry(0.18, 16, 16);
+            color = '#06b6d4';
+          } else {
+            geo = new THREE.BoxGeometry(0.24, 0.24, 0.24);
+            color = '#f59e0b';
+          }
+
+          const antMesh = new THREE.Mesh(geo, new THREE.MeshStandardMaterial({ color, roughness: 0.3 }));
+          antMesh.position.set(rx, 0, rz);
+          antMesh.lookAt(rx * 2, 0, rz * 2);
+          antMesh.rotateX(Math.PI / 2);
+          rbcGroup.add(antMesh);
+          antigenMeshes.push(antMesh);
+
+          // Add Y-shaped Antibody binding to antigen if enabled
+          if (showAntibodies) {
+            const abGroup = new THREE.Group();
+            const abMat = new THREE.MeshStandardMaterial({ color: '#38bdf8', emissive: '#0284c7', emissiveIntensity: 0.35 });
+
+            const stem = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.05, 0.55, 10), abMat);
+            stem.position.y = 0.28;
+            abGroup.add(stem);
+
+            const arm1 = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.04, 0.35, 10), abMat);
+            arm1.position.set(-0.11, 0.05, 0);
+            arm1.rotation.z = -0.55;
+            abGroup.add(arm1);
+
+            const arm2 = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.04, 0.35, 10), abMat);
+            arm2.position.set(0.11, 0.05, 0);
+            arm2.rotation.z = 0.55;
+            abGroup.add(arm2);
+
+            abGroup.position.set(Math.cos(ang) * 2.75, 0, Math.sin(ang) * 2.75);
+            abGroup.lookAt(Math.cos(ang) * 4, 0, Math.sin(ang) * 4);
+            abGroup.rotateX(Math.PI / 2);
+            rbcGroup.add(abGroup);
+            antibodyMeshes.push(abGroup);
+          }
+        }
+      }
+
+      const infoMap = {
+        'A+':  { title: 'Red Blood Cell (Group A+)', desc: 'Carries green Antigen A spikes and Rh markers. Adding Anti-A serum causes Y-shaped antibodies to lock onto Antigen A and clump the cells.' },
+        'B+':  { title: 'Red Blood Cell (Group B+)', desc: 'Carries cyan spherical Antigen B markers and Rh antigens. Adding Anti-B serum binds Antigen B and causes clumping.' },
+        'AB+': { title: 'Red Blood Cell (Group AB+)', desc: 'Carries BOTH Antigen A and Antigen B on its membrane, so it clumps with both Anti-A and Anti-B sera.' },
+        'O-':  { title: 'Red Blood Cell (Group O−)', desc: 'Has NO surface A, B, or Rh antigens! Even when antisera are added, antibodies have nothing to bind to, so NO clumping occurs.' }
+      };
+
+      document.getElementById('rbc-model-title').textContent = infoMap[currentRBCType].title;
+      document.getElementById('rbc-model-desc').textContent = infoMap[currentRBCType].desc;
+    }
+
+    function set3DMode(mode) {
+      current3DMode = mode;
+      const isLancet = mode === 'lancet';
+
+      lancetGroup.visible = isLancet;
+      rbcGroup.visible = !isLancet;
+
+      document.getElementById('controls-mode-a').classList.toggle('hidden', !isLancet);
+      document.getElementById('controls-mode-b').classList.toggle('hidden', isLancet);
+      document.getElementById('eyepiece-pip').classList.toggle('hidden', !isLancet);
+
+      const btnLancet = document.getElementById('mode-btn-lancet');
+      const btnRBC = document.getElementById('mode-btn-rbc');
+
+      btnLancet.className = isLancet
+        ? 'studio-btn flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-bold bg-gradient-to-r from-emerald-600 to-cyan-600 text-white shadow'
+        : 'studio-btn flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-bold text-gray-400 hover:text-white';
+
+      btnRBC.className = !isLancet
+        ? 'studio-btn flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-bold bg-gradient-to-r from-emerald-600 to-cyan-600 text-white shadow'
+        : 'studio-btn flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-bold text-gray-400 hover:text-white';
+
+      document.getElementById('hud-mode-badge').textContent = isLancet
+        ? 'MODE A • STERILE LANCET BLOOD TYPING'
+        : 'MODE B • 3D RED BLOOD CELL & ANTIGENS';
+
+      setupCalloutAnchors();
+      if (!isLancet) {
+        camState = { radius: 8.5, theta: 0.4, phi: 1.05, targetY: 0 };
+        updateCameraFromSpherical();
+      } else {
+        camState = { ...defaultCamState };
+        updateCameraFromSpherical();
+      }
+    }
+
+    function applyPracticalStep(step) {
+      practicalStep = step;
+      const activeGroup = getActiveGroup();
+      const reactions = bloodReactions[activeGroup];
+
+      const stepNames = [
+        'Step 0: Ready on Lab Tray',
+        'Step 1: Fingertip Sterilized with Alcohol Swab',
+        'Step 2: Pricked with Sterile Lancet',
+        'Step 3: 3 Blood Drops Placed on Slide',
+        'Step 4: Anti-A, Anti-B & Anti-D Added',
+        'Step 5: Mixed — Observe Agglutination!'
+      ];
+      document.getElementById('hud-stage-badge').textContent = stepNames[step] || stepNames[0];
+
+      // Step 1: Alcohol Swab moves onto fingertip
+      swabMesh.position.set(step >= 1 ? -1.95 : -3.9, step === 1 ? 0.92 : 0.08, step >= 1 ? -1.3 : 1.15);
+
+      // Step 2: Sterile Lancet clicks onto fingertip & draws blood drop
+      lancetMesh.position.set(step === 2 ? -0.95 : -0.85, step === 2 ? 0.65 : 0.25, step === 2 ? -1.55 : -1.9);
+      fingerBloodDrop.visible = step >= 2;
+
+      // Step 3: 3 Blood Drops appear in circles A, B, D
+      ['A', 'B', 'D'].forEach(k => {
+        slideBloodDrops[k].visible = step >= 3;
+      });
+
+      // Step 4: Antiserum drops added on top of blood drops
+      ['A', 'B', 'D'].forEach(k => {
+        serumDrops[k].visible = step >= 4;
+      });
+
+      // Step 5: Mixing toothpicks stir & clumping granules appear in reactive wells
+      toothpicks.forEach((tp, idx) => {
+        if (step >= 5) {
+          tp.mesh.position.set(tp.targetX, 0.72, 1.05);
+          tp.mesh.rotation.x = 0.2;
+        } else {
+          tp.mesh.position.set(4.15 + idx * 0.24, 0.08, 1.05);
+          tp.mesh.rotation.x = Math.PI / 2;
+        }
+      });
+
+      ['A', 'B', 'D'].forEach(k => {
+        const isClumped = step >= 5 && reactions[k];
+        clumpMeshes[k].forEach(g => { g.visible = isClumped; });
+        slideBloodDrops[k].visible = step >= 3 && !isClumped;
+      });
+
+      // Update Step Cards UI
+      document.querySelectorAll('.prep-step-btn').forEach(btn => {
+        const s = parseInt(btn.getAttribute('data-prep-step'), 10);
+        const check = btn.querySelector('.step-check');
+        btn.classList.remove('next-step-pulse', 'border-emerald-500/40', 'border-cyan-400', 'bg-emerald-950/30');
+        if (s <= step) {
+          btn.classList.add('border-emerald-500/50', 'bg-emerald-950/30');
+          check.textContent = '✓';
+          check.className = 'step-check text-xs text-emerald-400 font-bold';
+        } else if (s === step + 1) {
+          btn.classList.add('next-step-pulse', 'border-emerald-500/40');
+          check.textContent = '●';
+          check.className = 'step-check text-xs text-cyan-400 font-bold';
+        } else {
+          btn.classList.add('border-gray-800');
+          check.textContent = '○';
+          check.className = 'step-check text-xs text-gray-500 font-bold';
+        }
+      });
+
+      // Update Well Readout Badges
+      const resultBanner = document.getElementById('practical-result-banner');
+      if (step < 5) {
+        ['a', 'b', 'd'].forEach(w => {
+          const el = document.getElementById(`well-status-${w}`);
+          el.textContent = step >= 4 ? 'Ready to mix...' : (step >= 3 ? 'Blood drop placed' : 'Empty');
+          el.className = 'mt-1 font-mono text-gray-400';
+        });
+        resultBanner.textContent = 'Complete Step 5 to read clumping result';
+        resultBanner.className = 'px-3 py-1 rounded-full text-xs font-bold bg-gray-800 text-gray-300';
+      } else {
+        ['A', 'B', 'D'].forEach(k => {
+          const el = document.getElementById(`well-status-${k.toLowerCase()}`);
+          if (reactions[k]) {
+            el.textContent = '+ CLUMPING';
+            el.className = 'mt-1 font-mono font-bold text-rose-400';
+          } else {
+            el.textContent = '− NO CLUMPING';
+            el.className = 'mt-1 font-mono font-bold text-emerald-400';
+          }
+        });
+
+        if (currentBloodSample === 'MYSTERY') {
+          resultBanner.textContent = 'Mystery Sample Ready — Identify below!';
+          resultBanner.className = 'px-3 py-1 rounded-full text-xs font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40';
+        } else {
+          resultBanner.textContent = `Confirmed Result: Blood Group ${activeGroup}`;
+          resultBanner.className = 'px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40';
+        }
+      }
+
+      drawEyepiecePIP();
+    }
+
+    function drawEyepiecePIP() {
+      const canvas = document.getElementById('pip-eyepiece-canvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      const w = canvas.width;
+      const h = canvas.height;
+      const selectedWell = document.getElementById('pip-well-select').value;
+      const activeGroup = getActiveGroup();
+      const isPositive = bloodReactions[activeGroup][selectedWell];
+
+      ctx.clearRect(0, 0, w, h);
+
+      if (practicalStep < 3) {
+        ctx.fillStyle = '#0f172a';
+        ctx.fillRect(0, 0, w, h);
+        ctx.fillStyle = '#94a3b8';
+        ctx.font = 'bold 12px Inter, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('No Blood on Slide Yet', w / 2, h / 2);
+        document.getElementById('pip-status-text').textContent = 'Clean Glass Slide';
+        return;
+      }
+
+      // Brightfield microscope circle
+      const bg = ctx.createRadialGradient(w / 2, h / 2, 10, w / 2, h / 2, w / 2);
+      bg.addColorStop(0, '#fff1f2');
+      bg.addColorStop(1, '#fecdd3');
+      ctx.fillStyle = bg;
+      ctx.fillRect(0, 0, w, h);
+
+      const rand = mulberry32(selectedWell.charCodeAt(0) * 131 + (isPositive ? 7 : 3));
+
+      if (practicalStep >= 5 && isPositive) {
+        // Clumped RBC clusters
+        const clusters = [{ x: 72, y: 76 }, { x: 145, y: 82 }, { x: 108, y: 148 }];
+        clusters.forEach(c => {
+          for (let i = 0; i < 16; i++) {
+            const ang = rand() * Math.PI * 2;
+            const dist = rand() * 26;
+            ctx.fillStyle = '#be123c';
+            ctx.beginPath();
+            ctx.arc(c.x + Math.cos(ang) * dist, c.y + Math.sin(ang) * dist, 7, 0, Math.PI * 2);
+            ctx.fill();
+          }
+        });
+        document.getElementById('pip-status-text').textContent = `Well ${selectedWell}: + Agglutination`;
+      } else {
+        // Smooth separated RBCs
+        for (let i = 0; i < 42; i++) {
+          const rx = 26 + rand() * (w - 52);
+          const ry = 26 + rand() * (h - 52);
+          ctx.fillStyle = '#e11d48';
+          ctx.beginPath();
+          ctx.arc(rx, ry, 7, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.fillStyle = '#fda4af';
+          ctx.beginPath();
+          ctx.arc(rx, ry, 3, 0, Math.PI * 2);
+          ctx.fill();
+        }
+        document.getElementById('pip-status-text').textContent =
+          practicalStep >= 5 ? `Well ${selectedWell}: − Smooth RBCs` : `Well ${selectedWell}: Unmixed Blood`;
+      }
+    }
+
+    function setupCalloutAnchors() {
+      const layer = document.getElementById('callout-layer');
+      layer.innerHTML = '';
+      calloutAnchors = [];
+
+      const items = current3DMode === 'lancet'
+        ? [
+            { text: 'Sterile Lancet', pos: new THREE.Vector3(-0.85, 0.85, -1.9) },
+            { text: '70% Alcohol Swab', pos: new THREE.Vector3(-3.9, 0.55, 1.15) },
+            { text: 'Ring Fingertip', pos: new THREE.Vector3(-2.1, 1.15, -1.55) },
+            { text: 'Glass Slide (A, B, D)', pos: new THREE.Vector3(0.55, 0.65, 1.75) },
+            { text: 'Anti-A, B, D Bottles', pos: new THREE.Vector3(2.55, 1.85, -1.85) }
+          ]
+        : [
+            { text: 'Biconcave Red Blood Cell', pos: new THREE.Vector3(0, 1.15, 0) },
+            { text: 'Surface Antigens', pos: new THREE.Vector3(2.45, 0.55, 0) },
+            { text: 'Plasma Membrane', pos: new THREE.Vector3(-2.1, -0.65, 1.1) }
+          ];
+
+      items.forEach(item => {
+        const el = document.createElement('div');
+        el.className = 'callout-label';
+        el.textContent = item.text;
+        el.style.display = showLabels ? 'block' : 'none';
+        layer.appendChild(el);
+        calloutAnchors.push({ el, pos: item.pos });
+      });
+    }
+
+    function updateCalloutPositions() {
+      const container = document.getElementById('three-container');
+      const w = container.clientWidth;
+      const h = container.clientHeight;
+
+      calloutAnchors.forEach(item => {
+        if (!showLabels) {
+          item.el.style.display = 'none';
+          return;
+        }
+        const v = item.pos.clone().project(camera);
+        if (v.z > 1) {
+          item.el.style.display = 'none';
+        } else {
+          item.el.style.display = 'block';
+          item.el.style.left = `${(v.x * 0.5 + 0.5) * w}px`;
+          item.el.style.top = `${(-v.y * 0.5 + 0.5) * h}px`;
+        }
+      });
+    }
+
+    function setupOrbitControls(container) {
+      container.addEventListener('mousedown', (e) => {
+        if (e.target.closest('button') || e.target.closest('input') || e.target.closest('select')) return;
+        isDragging = true;
+        prevPointer = { x: e.clientX, y: e.clientY };
+      });
+      window.addEventListener('mouseup', () => { isDragging = false; });
+      window.addEventListener('mousemove', (e) => {
+        if (!isDragging) return;
+        const dx = e.clientX - prevPointer.x;
+        const dy = e.clientY - prevPointer.y;
+        prevPointer = { x: e.clientX, y: e.clientY };
+        camState.theta -= dx * 0.008;
+        camState.phi = Math.min(1.48, Math.max(0.25, camState.phi - dy * 0.008));
+        updateCameraFromSpherical();
+      });
+
+      container.addEventListener('touchstart', (e) => {
+        if (e.target.closest('button') || e.target.closest('input') || e.target.closest('select')) return;
+        if (e.touches.length === 1) {
+          isDragging = true;
+          prevPointer = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+        }
+      }, { passive: true });
+      window.addEventListener('touchend', () => { isDragging = false; });
+      container.addEventListener('touchmove', (e) => {
+        if (!isDragging || e.touches.length !== 1) return;
+        const dx = e.touches[0].clientX - prevPointer.x;
+        const dy = e.touches[0].clientY - prevPointer.y;
+        prevPointer = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+        camState.theta -= dx * 0.008;
+        camState.phi = Math.min(1.48, Math.max(0.25, camState.phi - dy * 0.008));
+        updateCameraFromSpherical();
+      }, { passive: true });
+
+      container.addEventListener('wheel', (e) => {
+        e.preventDefault();
+        camState.radius = Math.min(18.5, Math.max(4.5, camState.radius + e.deltaY * 0.008));
+        document.getElementById('slider-zoom').value = Math.round(camState.radius * 10);
+        updateCameraFromSpherical();
+      }, { passive: false });
+    }
+
+    function setup3DControlsUI() {
+      // Mode Switcher Buttons
+      document.getElementById('mode-btn-lancet').addEventListener('click', () => set3DMode('lancet'));
+      document.getElementById('mode-btn-rbc').addEventListener('click', () => set3DMode('rbc'));
+
+      // Camera Angle Presets
+      document.querySelectorAll('.cam-preset-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.cam-preset-btn').forEach(b => {
+            b.className = 'cam-preset-btn studio-btn px-2 py-0.5 rounded-lg text-[10px] font-semibold text-gray-300 hover:bg-white/10';
+          });
+          btn.className = 'cam-preset-btn studio-btn px-2 py-0.5 rounded-lg text-[10px] font-semibold bg-cyan-600/80 text-white';
+
+          const preset = btn.getAttribute('data-cam-preset');
+          if (preset === 'iso') camState = { ...defaultCamState };
+          if (preset === 'top') camState = { radius: 9.8, theta: 0.0, phi: 0.28, targetY: 0.3 };
+          if (preset === 'finger') camState = { radius: 7.2, theta: -0.45, phi: 0.95, targetY: 0.5 };
+          if (preset === 'front') camState = { radius: 11.0, theta: 0.0, phi: 1.25, targetY: 0.35 };
+          document.getElementById('slider-zoom').value = Math.round(camState.radius * 10);
+          updateCameraFromSpherical();
+        });
+      });
+
+      // Bottom Dock Controls
+      document.getElementById('btn-toggle-rotate').addEventListener('click', () => {
+        autoRotate = !autoRotate;
+        document.getElementById('rotate-label').textContent = `Rotate: ${autoRotate ? 'ON' : 'OFF'}`;
+      });
+
+      document.getElementById('btn-toggle-labels').addEventListener('click', (e) => {
+        showLabels = !showLabels;
+        const btn = e.currentTarget;
+        document.getElementById('labels-label').textContent = `Labels: ${showLabels ? 'ON' : 'OFF'}`;
+        btn.className = showLabels
+          ? 'studio-btn flex items-center gap-1 px-2.5 py-1 rounded-lg text-[11px] font-semibold bg-cyan-500/20 text-cyan-200 border border-cyan-400/30'
+          : 'studio-btn flex items-center gap-1 px-2.5 py-1 rounded-lg text-[11px] font-semibold text-gray-300 hover:bg-white/10 border border-transparent';
+      });
+          btn.className = 'cam-preset-btn studio-btn px-2.5 py-1 rounded-lg text-[11px] font-semibold bg-cyan-600/80 text-white';
+
+          const preset = btn.getAttribute('data-cam-preset');
+          if (preset === 'iso') camState = { ...defaultCamState };
+          if (preset === 'top') camState = { radius: 9.2, theta: 0.0, phi: 0.28, targetY: 0.3 };
+          if (preset === 'finger') camState = { radius: 6.8, theta: -0.45, phi: 0.95, targetY: 0.5 };
+          if (preset === 'front') camState = { radius: 10.5, theta: 0.0, phi: 1.25, targetY: 0.4 };
+          document.getElementById('slider-zoom').value = Math.round(camState.radius * 10);
+          updateCameraFromSpherical();
+        });
+      });
+
+      // Bottom Dock Controls
+      document.getElementById('btn-toggle-rotate').addEventListener('click', () => {
+        autoRotate = !autoRotate;
+        document.getElementById('rotate-label').textContent = `Auto-Rotate: ${autoRotate ? 'ON' : 'OFF'}`;
+      });
+
+      document.getElementById('btn-toggle-labels').addEventListener('click', (e) => {
+        showLabels = !showLabels;
+        const btn = e.currentTarget;
+        document.getElementById('labels-label').textContent = `3D Labels: ${showLabels ? 'ON' : 'OFF'}`;
+        btn.className = showLabels
+          ? 'studio-btn flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-cyan-500/20 text-cyan-200 border border-cyan-400/30'
+          : 'studio-btn flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold text-gray-300 hover:bg-white/10 border border-transparent';
+      });
+
+      document.getElementById('btn-reset-camera').addEventListener('click', () => {
+        camState = { ...defaultCamState };
+        document.getElementById('slider-zoom').value = Math.round(camState.radius * 10);
+        updateCameraFromSpherical();
+      });
+
+      document.getElementById('slider-zoom').addEventListener('input', (e) => {
+        camState.radius = parseInt(e.target.value, 10) / 10;
+        updateCameraFromSpherical();
+      });
+      document.getElementById('btn-zoom-in').addEventListener('click', () => {
+        camState.radius = Math.max(4.5, camState.radius - 1.0);
+        document.getElementById('slider-zoom').value = Math.round(camState.radius * 10);
+        updateCameraFromSpherical();
+      });
+      document.getElementById('btn-zoom-out').addEventListener('click', () => {
+        camState.radius = Math.min(18.5, camState.radius + 1.0);
+        document.getElementById('slider-zoom').value = Math.round(camState.radius * 10);
+        updateCameraFromSpherical();
+      });
+
+      // PIP Well Selector
+      document.getElementById('pip-well-select').addEventListener('change', drawEyepiecePIP);
+
+      // Sample Blood Group Selector
+      const allGroups = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
+      document.querySelectorAll('.sample-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const sample = btn.getAttribute('data-sample');
+          currentBloodSample = sample;
+
+          document.querySelectorAll('.sample-btn').forEach(b => {
+            const isMystery = b.getAttribute('data-sample') === 'MYSTERY';
+            b.className = isMystery
+              ? 'sample-btn studio-btn py-1.5 rounded-lg text-xs font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40 hover:bg-amber-500/30'
+              : 'sample-btn studio-btn py-1.5 rounded-lg text-xs font-bold bg-gray-800 text-gray-300 hover:bg-gray-700';
+          });
+          btn.className = 'sample-btn studio-btn py-1.5 rounded-lg text-xs font-bold bg-emerald-600 text-white border border-emerald-400';
+
+          const quizBox = document.getElementById('mystery-quiz-box');
+          if (sample === 'MYSTERY') {
+            actualMysteryGroup = allGroups[Math.floor(Math.random() * allGroups.length)];
+            quizBox.classList.remove('hidden');
+            document.getElementById('mystery-feedback').textContent = '';
+          } else {
+            quizBox.classList.add('hidden');
+          }
+
+          applyPracticalStep(practicalStep);
+        });
+      });
+
+      // Mystery Quiz Buttons
+      document.querySelectorAll('.guess-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const guess = btn.getAttribute('data-guess');
+          const fb = document.getElementById('mystery-feedback');
+          if (practicalStep < 5) {
+            fb.textContent = 'First complete Step 5 (Mix & Check Clumps) before guessing!';
+            fb.className = 'text-xs font-semibold text-amber-300';
+            return;
+          }
+          if (guess === actualMysteryGroup) {
+            fb.textContent = `✓ Correct! The Mystery Sample is Blood Group ${actualMysteryGroup}.`;
+            fb.className = 'text-xs font-bold text-emerald-400';
+          } else {
+            fb.textContent = `✗ Not ${guess}. Check which circles (A, B, D) show clumping and try again!`;
+            fb.className = 'text-xs font-semibold text-rose-400';
+          }
+        });
+      });
+
+      // 5 Practical Step Buttons
+      document.querySelectorAll('.prep-step-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          stopAutoPlay();
+          const step = parseInt(btn.getAttribute('data-prep-step'), 10);
+          applyPracticalStep(step);
+        });
+      });
+
+      // Auto-Play Practical Walkthrough
+      document.getElementById('btn-autoplay-prep').addEventListener('click', () => {
+        if (autoPlayTimer) {
+          stopAutoPlay();
+          return;
+        }
+        applyPracticalStep(0);
+        document.getElementById('autoplay-prep-label').textContent = 'Stop Auto-Play';
+        let next = 1;
+        autoPlayTimer = setInterval(() => {
+          applyPracticalStep(next);
+          next++;
+          if (next > 5) {
+            stopAutoPlay();
+          }
+        }, 1250);
+      });
+
+      document.getElementById('btn-prep-reset').addEventListener('click', () => {
+        stopAutoPlay();
+        applyPracticalStep(0);
+      });
+
+      // Mode B: RBC Type Buttons & Antibody Toggle
+      document.querySelectorAll('.rbc-type-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          currentRBCType = btn.getAttribute('data-rbc-type');
+          document.querySelectorAll('.rbc-type-btn').forEach(b => {
+            b.className = 'rbc-type-btn studio-btn px-3 py-3 rounded-xl text-xs font-bold bg-[#0b1120] hover:bg-gray-800 text-gray-300 border border-gray-800';
+          });
+          btn.className = 'rbc-type-btn studio-btn px-3 py-3 rounded-xl text-xs font-bold bg-gradient-to-r from-emerald-600 to-cyan-600 text-white border border-emerald-400/50 shadow-lg';
+          updateRBCModelVisuals();
+        });
+      });
+
+      document.getElementById('btn-toggle-antibodies').addEventListener('click', (e) => {
+        showAntibodies = !showAntibodies;
+        e.currentTarget.textContent = `Show Antibodies: ${showAntibodies ? 'ON' : 'OFF'}`;
+        updateRBCModelVisuals();
+      });
+
+      // Split-Screen Virtual Lab Modal Open / Close
+      const vlabModal = document.getElementById('virtual-lab-modal');
+      const threeContainer = document.getElementById('three-container');
+      const modeSwitcherBar = document.getElementById('mode-switcher-bar');
+      const controlsA = document.getElementById('controls-mode-a');
+      const controlsB = document.getElementById('controls-mode-b');
+
+      function openVirtualLab() {
+        document.getElementById('vlab-left-stage').appendChild(threeContainer);
+        threeContainer.style.height = '100%';
+        document.getElementById('vlab-mode-switcher-slot').appendChild(modeSwitcherBar);
+        document.getElementById('vlab-right-controls').appendChild(controlsA);
+        document.getElementById('vlab-right-controls').appendChild(controlsB);
+        vlabModal.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+        handleResize();
+      }
+
+      function closeVirtualLab() {
+        document.getElementById('inline-canvas-host').appendChild(threeContainer);
+        threeContainer.style.height = '';
+        document.getElementById('inline-mode-switcher-host').appendChild(modeSwitcherBar);
+        document.getElementById('inline-controls-host').appendChild(controlsA);
+        document.getElementById('inline-controls-host').appendChild(controlsB);
+        vlabModal.classList.add('hidden');
+        document.body.style.overflow = '';
+        handleResize();
+      }
+
+      document.querySelectorAll('[data-open-vlab]').forEach(btn => {
+        btn.addEventListener('click', openVirtualLab);
+      });
+      document.getElementById('btn-close-vlab').addEventListener('click', closeVirtualLab);
+    }
+
+    function stopAutoPlay() {
+      if (autoPlayTimer) {
+        clearInterval(autoPlayTimer);
+        autoPlayTimer = null;
+      }
+      document.getElementById('autoplay-prep-label').textContent = 'Auto-Play Practical';
+    }
+
+    function handleResize() {
+      drawBloodChart();
+      const container = document.getElementById('three-container');
+      if (container && renderer && camera) {
+        const w = container.clientWidth;
+        const h = container.clientHeight;
+        if (w > 0 && h > 0) {
+          camera.aspect = w / h;
+          camera.updateProjectionMatrix();
+          renderer.setSize(w, h);
+        }
+      }
+    }
+
+    function animate() {
+      requestAnimationFrame(animate);
+
+      if (autoRotate && !isDragging) {
+        camState.theta += 0.004;
+        updateCameraFromSpherical();
+      }
+
+      if (current3DMode === 'rbc' && rbcGroup) {
+        rbcGroup.rotation.y += 0.005;
+      }
+
+      updateCalloutPositions();
+      if (renderer && scene && camera) {
+        renderer.render(scene, camera);
+      }
+    }
+
+    window.addEventListener('resize', handleResize);
+    window.onload = function () {
+      initCompatibilityUI();
+      initPhotoGallery();
+      init3DScene();
+      animate();
+    };
+  </script>
+</body>
+</html>
