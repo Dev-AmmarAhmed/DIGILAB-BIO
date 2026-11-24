@@ -633,6 +633,12 @@
             <p class="text-xs sm:text-sm text-gray-400">Perform the sterile lancet finger-prick &amp; antisera test in 3D, or launch the Split-Screen Virtual Lab</p>
           </div>
         </div>
+        <button type="button" data-open-vlab class="studio-btn self-start lg:self-auto inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-extrabold bg-gradient-to-r from-emerald-500 to-cyan-500 hover:from-emerald-400 hover:to-cyan-400 text-slate-950 shadow-lg shadow-cyan-950/50">
+          <span>Enter Virtual Lab (Full Screen)</span>
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+        </button>
+      </div>
+
       <!-- Main 3D Viewport & Studio Deck Card (Inline Horizontal Split Layout) -->
       <div id="inline-3d-card" class="bg-gradient-to-b from-[#111827] to-[#0d1424] border border-gray-800 rounded-3xl p-4 sm:p-5 shadow-2xl">
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch">
@@ -2345,32 +2351,6 @@
         btn.className = showLabels
           ? 'studio-btn flex items-center gap-1 px-2.5 py-1 rounded-lg text-[11px] font-semibold bg-cyan-500/20 text-cyan-200 border border-cyan-400/30'
           : 'studio-btn flex items-center gap-1 px-2.5 py-1 rounded-lg text-[11px] font-semibold text-gray-300 hover:bg-white/10 border border-transparent';
-      });
-          btn.className = 'cam-preset-btn studio-btn px-2.5 py-1 rounded-lg text-[11px] font-semibold bg-cyan-600/80 text-white';
-
-          const preset = btn.getAttribute('data-cam-preset');
-          if (preset === 'iso') camState = { ...defaultCamState };
-          if (preset === 'top') camState = { radius: 9.2, theta: 0.0, phi: 0.28, targetY: 0.3 };
-          if (preset === 'finger') camState = { radius: 6.8, theta: -0.45, phi: 0.95, targetY: 0.5 };
-          if (preset === 'front') camState = { radius: 10.5, theta: 0.0, phi: 1.25, targetY: 0.4 };
-          document.getElementById('slider-zoom').value = Math.round(camState.radius * 10);
-          updateCameraFromSpherical();
-        });
-      });
-
-      // Bottom Dock Controls
-      document.getElementById('btn-toggle-rotate').addEventListener('click', () => {
-        autoRotate = !autoRotate;
-        document.getElementById('rotate-label').textContent = `Auto-Rotate: ${autoRotate ? 'ON' : 'OFF'}`;
-      });
-
-      document.getElementById('btn-toggle-labels').addEventListener('click', (e) => {
-        showLabels = !showLabels;
-        const btn = e.currentTarget;
-        document.getElementById('labels-label').textContent = `3D Labels: ${showLabels ? 'ON' : 'OFF'}`;
-        btn.className = showLabels
-          ? 'studio-btn flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-cyan-500/20 text-cyan-200 border border-cyan-400/30'
-          : 'studio-btn flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold text-gray-300 hover:bg-white/10 border border-transparent';
       });
 
       document.getElementById('btn-reset-camera').addEventListener('click', () => {
