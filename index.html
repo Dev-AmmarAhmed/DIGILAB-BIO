@@ -1,4 +1,3 @@
-
 ```html
 <!DOCTYPE html>
 <html lang="en" class="scroll-smooth">
@@ -113,6 +112,30 @@
       vertical-align: middle;
     }
 
+    /* Glassmorphic 3D Studio Controls */
+    .glass-dock {
+      background: rgba(11, 17, 32, 0.78);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.45);
+    }
+
+    .studio-btn {
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .studio-btn:active {
+      transform: scale(0.96);
+    }
+
+    @keyframes pulseGlow {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.45); }
+      50% { box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
+    }
+    .next-step-pulse {
+      animation: pulseGlow 2s infinite;
+    }
+
     /* Micrograph hover elevation */
     .photo-card {
       transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
@@ -178,9 +201,10 @@
         <a href="#section-gallery" class="px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium bg-gray-900 hover:bg-gray-800 text-gray-200 hover:text-emerald-300 border border-gray-800 hover:border-emerald-500/40 transition">
           3. Specimen Photo Gallery
         </a>
-        <a href="#section-3d" class="px-3 py-1.5 rounded-lg text-xs sm:text-sm font-semibold bg-gradient-to-r from-emerald-600 to-cyan-600 hover:from-emerald-500 hover:to-cyan-500 text-white shadow-md shadow-cyan-950/50 transition">
-          4. Interactive 3D Lab
-        </a>
+        <button type="button" data-open-vlab class="studio-btn flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-bold bg-gradient-to-r from-emerald-500 to-cyan-500 hover:from-emerald-400 hover:to-cyan-400 text-slate-950 shadow-md shadow-cyan-950/50 transition">
+          <span>Enter Virtual Lab</span>
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+        </button>
       </nav>
     </div>
   </header>
@@ -206,8 +230,17 @@
             Study of Mitosis in Onion Root Tip Cells &amp; Temporary Mount of Onion Epidermal Peel
           </h2>
           <p class="text-gray-300 text-sm sm:text-base leading-relaxed">
-            Explore eukaryotic plant cell architecture and somatic cell division in <em>Allium cepa</em> (2n = 16). Review the complete laboratory manual, analyze stage frequency graphs, inspect high-magnification specimen micrographs, and perform a hands-on 3D slide preparation and 3D cellular exploration below.
+            Explore eukaryotic plant cell architecture and somatic cell division in <em>Allium cepa</em> (2n = 16). Review the complete laboratory manual, analyze stage frequency graphs, inspect high-magnification specimen micrographs, and launch the full-screen 3D Virtual Lab below.
           </p>
+          <div class="pt-1 flex flex-wrap items-center gap-3">
+            <button type="button" data-open-vlab class="studio-btn inline-flex items-center gap-2.5 px-5 py-3 rounded-xl text-sm font-extrabold bg-gradient-to-r from-emerald-500 via-teal-400 to-cyan-400 hover:from-emerald-400 hover:to-cyan-300 text-slate-950 shadow-lg shadow-emerald-950/60">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+              <span>Enter Virtual Lab (3D Split-Screen Studio)</span>
+            </button>
+            <a href="#section-theory" class="px-4 py-3 rounded-xl text-xs sm:text-sm font-semibold bg-gray-900/90 hover:bg-gray-800 text-gray-200 border border-gray-700 transition">
+              Read Lab Manual
+            </a>
+          </div>
         </div>
 
         <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-2 gap-3 shrink-0">
@@ -598,56 +631,73 @@
     <!-- SECTION 4: INTERACTIVE 3D RENDERING EXPERIMENT (THREE.JS WEBGL)     -->
     <!-- =================================================================== -->
     <section id="section-3d" class="scroll-mt-24 space-y-6">
+      <!-- Section Header & Segmented Mode Switcher -->
       <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
         <div class="flex items-center gap-3">
-          <span class="w-9 h-9 rounded-xl bg-gradient-to-br from-emerald-500/25 to-cyan-500/25 border border-cyan-400/50 text-cyan-300 font-bold flex items-center justify-center">4</span>
+          <span class="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500/25 to-cyan-500/25 border border-cyan-400/50 text-cyan-300 font-bold flex items-center justify-center shadow-lg shadow-cyan-950/40">4</span>
           <div>
             <h3 class="text-xl sm:text-2xl font-bold text-white">Interactive 3D Virtual Laboratory &amp; Cellular Explorer</h3>
-            <p class="text-xs sm:text-sm text-gray-400">Real-time WebGL 3D Simulation • Drag to orbit, scroll/pinch to zoom, or select a 3D experiment mode below</p>
+            <p class="text-xs sm:text-sm text-gray-400">Real-time WebGL 3D Studio • Drag to orbit, scroll/pinch to zoom, or launch the Split-Screen Virtual Lab</p>
           </div>
         </div>
 
-        <!-- Mode Switcher Tabs -->
-        <div class="inline-flex p-1.5 rounded-xl bg-[#111827] border border-gray-800 shadow-inner self-start">
-          <button id="mode-btn-microscope" class="px-4 py-2 rounded-lg text-xs sm:text-sm font-bold bg-gradient-to-r from-emerald-600 to-cyan-600 text-white shadow transition">
-            Mode A: 3D Virtual Slide Prep &amp; Microscope
-          </button>
-          <button id="mode-btn-cell" class="px-4 py-2 rounded-lg text-xs sm:text-sm font-bold text-gray-300 hover:text-white transition">
-            Mode B: 3D Onion Cell &amp; Mitosis Explorer
+        <div class="flex flex-wrap items-center gap-3 self-start">
+          <button type="button" data-open-vlab class="studio-btn flex items-center gap-2 px-4 py-2.5 rounded-2xl text-xs sm:text-sm font-extrabold bg-gradient-to-r from-emerald-500 to-cyan-500 hover:from-emerald-400 hover:to-cyan-400 text-slate-950 shadow-lg shadow-emerald-950/50">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"/></svg>
+            <span>Enter Virtual Lab (Split-Screen)</span>
           </button>
         </div>
       </div>
 
-      <!-- Main 3D Viewport Card -->
-      <div class="bg-[#111827] border border-gray-800 rounded-2xl p-4 sm:p-6 shadow-2xl space-y-5">
-        <!-- 3D Canvas Container -->
-        <div id="three-container" class="border border-gray-800 shadow-inner">
-          <!-- WebGL Fallback Message (hidden when WebGL works) -->
-          <div id="webgl-fallback" class="hidden absolute inset-0 flex flex-col items-center justify-center p-6 text-center bg-[#0b1120]">
-            <p class="text-lg font-bold text-rose-400 mb-2">WebGL 3D Context Unavailable</p>
-            <p class="text-sm text-gray-400 max-w-md">Your browser or hardware configuration currently disables WebGL 3D acceleration. Please enable hardware acceleration to interact with the 3D microscope and plant cell models.</p>
+      <!-- Main 3D Viewport & Studio Deck Card (Inline Host) -->
+      <div id="inline-3d-card" class="bg-gradient-to-b from-[#111827] to-[#0d1424] border border-gray-800 rounded-3xl p-4 sm:p-6 shadow-2xl space-y-6">
+        <!-- Segmented Mode Switcher Host -->
+        <div id="inline-mode-switcher-host" class="flex justify-between items-center flex-wrap gap-3">
+          <div id="mode-switcher-bar" class="inline-flex p-1.5 rounded-2xl bg-[#0b1120] border border-gray-800 shadow-xl">
+            <button id="mode-btn-microscope" class="studio-btn flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold bg-gradient-to-r from-emerald-600 to-cyan-600 text-white shadow-lg shadow-cyan-950/50">
+              <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"/></svg>
+              <span>Mode A: 3D Microscope</span>
+            </button>
+            <button id="mode-btn-cell" class="studio-btn flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold text-gray-400 hover:text-white">
+              <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M9 10a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1v-4z"/></svg>
+              <span>Mode B: 3D Onion Cell</span>
+            </button>
           </div>
+        </div>
 
-          <!-- Top-Left HUD Telemetry -->
-          <div class="absolute top-3 left-3 z-20 flex flex-wrap items-center gap-2 pointer-events-none">
-            <span id="hud-mode-badge" class="px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/20 border border-emerald-400/40 text-emerald-300 backdrop-blur-md">
-              MODE A • 3D WORKBENCH &amp; COMPOUND MICROSCOPE
-            </span>
-            <span id="hud-stage-badge" class="px-3 py-1 rounded-full text-xs font-mono bg-gray-900/85 border border-gray-700 text-cyan-300 backdrop-blur-md">
-              Step 0: Ready on Workbench
-            </span>
-          </div>
+        <!-- Inline Canvas Mount Slot -->
+        <div id="inline-canvas-host">
+          <!-- 3D Canvas Container -->
+          <div id="three-container" class="border border-gray-800/90 shadow-inner rounded-2xl">
+            <!-- Top-Left Mode & Stage HUD Bar -->
+            <div class="absolute top-3.5 left-3.5 z-20 flex flex-col gap-2 pointer-events-auto max-w-[62%]">
+              <div class="flex flex-wrap items-center gap-1.5">
+                <span id="hud-mode-badge" class="glass-dock px-3 py-1.5 rounded-full text-[11px] font-bold tracking-wide text-emerald-300">
+                  MODE A • 3D WORKBENCH &amp; MICROSCOPE
+                </span>
+                <span id="hud-stage-badge" class="glass-dock px-3 py-1.5 rounded-full text-[11px] font-mono text-cyan-300">
+                  Step 0: Ready on Workbench
+                </span>
+              </div>
 
-          <!-- Top-Right Live Microscope Eyepiece PIP Window (Visible in Mode A) -->
-          <div id="pip-eyepiece-box" class="absolute top-3 right-3 z-20 w-36 sm:w-44 bg-gray-950/90 border-2 border-cyan-500/50 rounded-2xl p-2 shadow-2xl backdrop-blur-md">
-            <div class="flex items-center justify-between text-[10px] font-mono text-cyan-300 mb-1 px-1">
-              <span>EYEPIECE PIP</span>
-              <span id="pip-mag-label">400x</span>
+              <!-- Quick Camera Angle Pills -->
+              <div class="glass-dock inline-flex items-center gap-1 p-1 rounded-xl self-start">
+                <span class="text-[10px] font-mono text-gray-400 px-2 uppercase">View</span>
+                <button data-cam-preset="iso" class="cam-preset-btn studio-btn px-2.5 py-1 rounded-lg text-[11px] font-semibold bg-cyan-600/80 text-white">3D Iso</button>
+                <button data-cam-preset="front" class="cam-preset-btn studio-btn px-2.5 py-1 rounded-lg text-[11px] font-semibold text-gray-300 hover:bg-white/10">Front</button>
+                <button data-cam-preset="top" class="cam-preset-btn studio-btn px-2.5 py-1 rounded-lg text-[11px] font-semibold text-gray-300 hover:bg-white/10">Top</button>
+                <button data-cam-preset="closeup" class="cam-preset-btn studio-btn px-2.5 py-1 rounded-lg text-[11px] font-semibold text-gray-300 hover:bg-white/10">Close-Up</button>
+              </div>
             </div>
-            <div class="relative w-full aspect-square rounded-full overflow-hidden border border-gray-700 bg-black mx-auto">
+
+            <!-- Top-Right Live Microscope Eyepiece PIP Window (Visible in Mode A) -->
+              </span>
+              <span id="pip-mag-label" class="px-1.5 py-0.5 rounded bg-cyan-500/20 text-cyan-200 font-bold">400x</span>
+            </div>
+            <div class="relative w-full aspect-square rounded-full overflow-hidden border-2 border-cyan-500/40 bg-black mx-auto shadow-inner">
               <canvas id="pip-eyepiece-canvas" width="220" height="220" class="w-full h-full block"></canvas>
             </div>
-            <div id="pip-status-text" class="text-[10px] text-center text-gray-300 mt-1 font-medium truncate">
+            <div id="pip-status-text" class="text-[10px] text-center text-gray-200 mt-1.5 font-semibold truncate">
               Blank Glass Slide
             </div>
           </div>
@@ -655,82 +705,144 @@
           <!-- Floating 3D Callout Labels Container -->
           <div id="callout-layer" class="absolute inset-0 z-10 pointer-events-none overflow-hidden"></div>
 
-          <!-- Bottom-Left Camera Controls Overlay -->
-          <div class="absolute bottom-3 left-3 z-20 flex flex-wrap items-center gap-2">
-            <button id="btn-toggle-rotate" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-gray-900/90 hover:bg-gray-800 text-gray-200 border border-gray-700 backdrop-blur-md transition">
-              Auto-Rotate: OFF
-            </button>
-            <button id="btn-toggle-labels" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-cyan-950/90 hover:bg-cyan-900 text-cyan-200 border border-cyan-500/40 backdrop-blur-md transition">
-              3D Labels: ON
-            </button>
-            <button id="btn-reset-camera" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-gray-900/90 hover:bg-gray-800 text-emerald-300 border border-gray-700 backdrop-blur-md transition">
-              Reset View
-            </button>
-          </div>
+          <!-- Bottom Glassmorphic Camera Dock -->
+          <div class="absolute bottom-3.5 left-3.5 right-3.5 z-20 flex flex-wrap items-center justify-between gap-2 pointer-events-none">
+            <!-- Left Action Pills -->
+            <div class="glass-dock flex items-center gap-1.5 p-1.5 rounded-2xl pointer-events-auto">
+              <button id="btn-toggle-rotate" class="studio-btn flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold text-gray-200 hover:bg-white/10">
+                <svg class="w-3.5 h-3.5 text-cyan-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                <span id="rotate-label">Auto-Rotate: OFF</span>
+              </button>
+              <button id="btn-toggle-labels" class="studio-btn flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold text-gray-300 hover:bg-white/10 border border-transparent">
+                <svg class="w-3.5 h-3.5 text-emerald-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/></svg>
+                <span id="labels-label">3D Labels: OFF</span>
+              </button>
+              <button id="btn-reset-camera" class="studio-btn flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold text-emerald-300 hover:bg-white/10" title="Reset Camera Position">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+                <span class="hidden sm:inline">Reset</span>
+              </button>
+            </div>
 
-          <!-- Bottom-Right Zoom & Cutaway Controls -->
-          <div class="absolute bottom-3 right-3 z-20 flex items-center gap-2 bg-gray-900/90 border border-gray-700 rounded-xl px-3 py-1.5 backdrop-blur-md">
-            <button id="btn-zoom-out" class="w-7 h-7 rounded-lg bg-gray-800 hover:bg-gray-700 text-white font-bold flex items-center justify-center" title="Zoom Out">−</button>
-            <span class="text-[11px] font-mono text-gray-300">ZOOM</span>
-            <button id="btn-zoom-in" class="w-7 h-7 rounded-lg bg-gray-800 hover:bg-gray-700 text-white font-bold flex items-center justify-center" title="Zoom In">+</button>
+            <!-- Right Smooth Zoom Control Bar -->
+            <div class="glass-dock flex items-center gap-2 px-3 py-1.5 rounded-2xl pointer-events-auto">
+              <button id="btn-zoom-out" class="studio-btn w-7 h-7 rounded-xl bg-white/5 hover:bg-white/15 text-white font-bold flex items-center justify-center" title="Zoom Out">−</button>
+              <input id="slider-zoom" type="range" min="45" max="190" value="115" class="w-20 sm:w-28 hidden sm:block" title="Zoom Distance" />
+              <span class="text-[11px] font-mono text-cyan-300 sm:hidden">ZOOM</span>
+              <button id="btn-zoom-in" class="studio-btn w-7 h-7 rounded-xl bg-white/5 hover:bg-white/15 text-white font-bold flex items-center justify-center" title="Zoom In">+</button>
+            </div>
           </div>
         </div>
+        </div>
 
+        <!-- Inline Controls Mount Slot -->
+        <div id="inline-controls-host" class="space-y-5">
         <!-- =============================================================== -->
         <!-- MODE A CONTROLS: 3D VIRTUAL SLIDE PREP & COMPOUND MICROSCOPE    -->
         <!-- =============================================================== -->
-        <div id="controls-mode-a" class="space-y-4">
-          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+        <div id="controls-mode-a" class="space-y-5">
+          <!-- Protocol Header Bar with Auto-Play Walkthrough -->
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-[#0b1120] border border-gray-800/90 rounded-2xl p-4">
             <div>
-              <h4 class="text-sm font-bold text-white uppercase tracking-wider">Virtual Laboratory Protocol Steps</h4>
-              <p class="text-xs text-gray-400">Execute each preparation step in sequence and observe both the 3D workbench and the live Microscope Eyepiece PIP</p>
+              <div class="flex items-center gap-2">
+                <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+                <h4 class="text-sm font-bold text-white uppercase tracking-wider">Guided Slide Preparation &amp; Microscopy Deck</h4>
+              </div>
+              <p class="text-xs text-gray-400 mt-0.5">Click steps sequentially or launch the automated lab protocol walkthrough</p>
             </div>
-            <button id="btn-prep-reset" class="self-start sm:self-auto px-3 py-1.5 rounded-lg text-xs font-semibold bg-gray-800 hover:bg-gray-700 text-gray-300 border border-gray-700">
-              Reset Workbench
+            <div class="flex items-center gap-2">
+              <button id="btn-autoplay-prep" class="studio-btn flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white shadow-lg shadow-emerald-950/50">
+                <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z"/></svg>
+                <span id="autoplay-prep-label">Auto-Play Protocol</span>
+              </button>
+              <button id="btn-prep-reset" class="studio-btn px-3.5 py-2 rounded-xl text-xs font-semibold bg-gray-800 hover:bg-gray-700 text-gray-300 border border-gray-700">
+                Reset
+              </button>
+            </div>
+          </div>
+
+          <!-- Interactive 4-Step Progress Cards -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
+            <button data-prep-step="1" class="prep-step-btn studio-btn next-step-pulse relative p-4 rounded-2xl bg-[#0b1120] hover:bg-gray-800/90 border border-emerald-500/40 text-left group">
+              <div class="flex items-center justify-between mb-1.5">
+                <span class="px-2 py-0.5 rounded-md bg-emerald-500/15 text-emerald-400 text-[10px] font-mono font-bold">STEP 01</span>
+                <span class="step-check text-xs text-gray-600 font-bold">●</span>
+              </div>
+              <div class="text-sm font-bold text-white group-hover:text-emerald-300">Place Onion Root Tip</div>
+              <div class="text-xs text-gray-400 mt-1 leading-relaxed">Transfer hydrolyzed 2 mm meristematic tip onto glass slide</div>
+            </button>
+
+            <button data-prep-step="2" class="prep-step-btn studio-btn relative p-4 rounded-2xl bg-[#0b1120] hover:bg-gray-800/90 border border-gray-800 text-left group">
+              <div class="flex items-center justify-between mb-1.5">
+                <span class="px-2 py-0.5 rounded-md bg-rose-500/15 text-rose-400 text-[10px] font-mono font-bold">STEP 02</span>
+                <span class="step-check text-xs text-gray-600 font-bold">○</span>
+              </div>
+              <div class="text-sm font-bold text-white group-hover:text-rose-300">Add 2% Acetocarmine</div>
+              <div class="text-xs text-gray-400 mt-1 leading-relaxed">Dispense crimson chromatin stain drop via glass pipette</div>
+            </button>
+
+            <button data-prep-step="3" class="prep-step-btn studio-btn relative p-4 rounded-2xl bg-[#0b1120] hover:bg-gray-800/90 border border-gray-800 text-left group">
+              <div class="flex items-center justify-between mb-1.5">
+                <span class="px-2 py-0.5 rounded-md bg-cyan-500/15 text-cyan-400 text-[10px] font-mono font-bold">STEP 03</span>
+                <span class="step-check text-xs text-gray-600 font-bold">○</span>
+              </div>
+              <div class="text-sm font-bold text-white group-hover:text-cyan-300">Coverslip &amp; Squash</div>
+              <div class="text-xs text-gray-400 mt-1 leading-relaxed">Lower glass coverslip at 45° and press into single monolayer</div>
+            </button>
+
+            <button data-prep-step="4" class="prep-step-btn studio-btn relative p-4 rounded-2xl bg-[#0b1120] hover:bg-gray-800/90 border border-gray-800 text-left group">
+              <div class="flex items-center justify-between mb-1.5">
+                <span class="px-2 py-0.5 rounded-md bg-amber-500/15 text-amber-400 text-[10px] font-mono font-bold">STEP 04</span>
+                <span class="step-check text-xs text-gray-600 font-bold">○</span>
+              </div>
+              <div class="text-sm font-bold text-white group-hover:text-amber-300">Mount &amp; Illuminate</div>
+              <div class="text-xs text-gray-400 mt-1 leading-relaxed">Clip slide on mechanical stage, power LED lamp &amp; observe</div>
             </button>
           </div>
 
-          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-            <button data-prep-step="1" class="prep-step-btn p-3.5 rounded-xl bg-[#0b1120] hover:bg-gray-800/90 border border-gray-700 text-left transition group">
-              <div class="text-xs font-mono text-emerald-400 font-bold">STEP 01</div>
-              <div class="text-sm font-bold text-white group-hover:text-emerald-300 mt-0.5">1. Place Onion Sample</div>
-              <div class="text-xs text-gray-400 mt-1">Transfer excised root tip onto center of glass slide</div>
-            </button>
-
-            <button data-prep-step="2" class="prep-step-btn p-3.5 rounded-xl bg-[#0b1120] hover:bg-gray-800/90 border border-gray-700 text-left transition group">
-              <div class="text-xs font-mono text-rose-400 font-bold">STEP 02</div>
-              <div class="text-sm font-bold text-white group-hover:text-rose-300 mt-0.5">2. Add Stain Drop</div>
-              <div class="text-xs text-gray-400 mt-1">Dispense 2% Acetocarmine crimson stain via dropper</div>
-            </button>
-
-            <button data-prep-step="3" class="prep-step-btn p-3.5 rounded-xl bg-[#0b1120] hover:bg-gray-800/90 border border-gray-700 text-left transition group">
-              <div class="text-xs font-mono text-cyan-400 font-bold">STEP 03</div>
-              <div class="text-sm font-bold text-white group-hover:text-cyan-300 mt-0.5">3. Place Coverslip</div>
-              <div class="text-xs text-gray-400 mt-1">Lower glass coverslip &amp; squash into cell monolayer</div>
-            </button>
-
-            <button data-prep-step="4" class="prep-step-btn p-3.5 rounded-xl bg-[#0b1120] hover:bg-gray-800/90 border border-gray-700 text-left transition group">
-              <div class="text-xs font-mono text-amber-400 font-bold">STEP 04</div>
-              <div class="text-sm font-bold text-white group-hover:text-amber-300 mt-0.5">4. Mount &amp; Focus</div>
-              <div class="text-xs text-gray-400 mt-1">Clip slide on microscope stage, switch on illuminator &amp; focus</div>
-            </button>
-          </div>
-
-          <!-- Fine Focus & Objective Magnification Slider for Mode A -->
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-[#0b1120] border border-gray-800 rounded-xl p-4">
-            <div>
-              <div class="flex justify-between text-xs font-semibold mb-1.5">
-                <span class="text-cyan-300">Fine Focus Knob Adjustment</span>
-                <span id="focus-readout" class="font-mono text-emerald-400">Optimal Focus (100%)</span>
+          <!-- Precision Optical Console: Fine Focus + Lamp Brightness + Objective Turret -->
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 bg-[#0b1120] border border-gray-800 rounded-2xl p-4">
+            <!-- Fine Focus Control -->
+            <div class="lg:col-span-5 flex flex-col justify-between space-y-2 bg-[#111827]/80 border border-gray-800/80 rounded-xl p-3.5">
+              <div class="flex items-center justify-between text-xs font-semibold">
+                <span class="text-cyan-300 flex items-center gap-1.5">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                  Fine Focus Knob
+                </span>
+                <div class="flex items-center gap-2">
+                  <span id="focus-readout" class="font-mono text-emerald-400 text-[11px]">Sharp (100%)</span>
+                  <button id="btn-autofocus" class="studio-btn px-2 py-0.5 rounded-md bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/40 text-[10px] font-bold">
+                    ✨ Auto-Focus
+                  </button>
+                </div>
               </div>
               <input id="slider-focus" type="range" min="0" max="100" value="50" class="w-full" />
             </div>
-            <div class="flex items-center justify-between gap-3">
-              <span class="text-xs font-semibold text-gray-300">Objective Lens Turret:</span>
-              <div class="flex gap-2">
-                <button data-obj="100x" class="obj-btn px-3 py-1.5 rounded-lg text-xs font-bold bg-gray-800 text-gray-300 border border-gray-700">10x (100x)</button>
-                <button data-obj="400x" class="obj-btn px-3 py-1.5 rounded-lg text-xs font-bold bg-cyan-600 text-white border border-cyan-400">40x (400x)</button>
-                <button data-obj="1000x" class="obj-btn px-3 py-1.5 rounded-lg text-xs font-bold bg-gray-800 text-gray-300 border border-gray-700">100x Oil</button>
+
+            <!-- Sub-Stage Lamp Brightness -->
+            <div class="lg:col-span-3 flex flex-col justify-between space-y-2 bg-[#111827]/80 border border-gray-800/80 rounded-xl p-3.5">
+              <div class="flex items-center justify-between text-xs font-semibold">
+                <span class="text-amber-300">LED Condenser</span>
+                <span id="lamp-readout" class="font-mono text-gray-300 text-[11px]">85%</span>
+              </div>
+              <input id="slider-lamp" type="range" min="20" max="100" value="85" class="w-full" />
+            </div>
+
+            <!-- Objective Lens Turret -->
+            <div class="lg:col-span-4 flex flex-col justify-between space-y-2 bg-[#111827]/80 border border-gray-800/80 rounded-xl p-3.5">
+              <div class="flex items-center justify-between text-xs font-semibold">
+                <span class="text-gray-300">Objective Lens Turret</span>
+                <span class="text-[10px] font-mono text-gray-400">DIN Achromatic</span>
+              </div>
+              <div class="grid grid-cols-3 gap-1.5">
+                <button data-obj="100x" class="obj-btn studio-btn px-2.5 py-1.5 rounded-lg text-xs font-bold bg-gray-800 hover:bg-gray-700 text-gray-300 border border-gray-700 flex items-center justify-center gap-1.5">
+                  <span class="w-2 h-2 rounded-full bg-emerald-400"></span>10x
+                </button>
+                <button data-obj="400x" class="obj-btn studio-btn px-2.5 py-1.5 rounded-lg text-xs font-bold bg-cyan-600 text-white border border-cyan-400 flex items-center justify-center gap-1.5 shadow">
+                  <span class="w-2 h-2 rounded-full bg-cyan-200"></span>40x
+                </button>
+                <button data-obj="1000x" class="obj-btn studio-btn px-2.5 py-1.5 rounded-lg text-xs font-bold bg-gray-800 hover:bg-gray-700 text-gray-300 border border-gray-700 flex items-center justify-center gap-1.5">
+                  <span class="w-2 h-2 rounded-full bg-amber-400"></span>100x
+                </button>
               </div>
             </div>
           </div>
@@ -739,51 +851,145 @@
         <!-- =============================================================== -->
         <!-- MODE B CONTROLS: 3D ONION CELL & MITOSIS EXPLORER               -->
         <!-- =============================================================== -->
-        <div id="controls-mode-b" class="hidden space-y-4">
-          <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-            <div>
-              <h4 class="text-sm font-bold text-white uppercase tracking-wider">3D Cellular Architecture &amp; Mitotic Stage Selector</h4>
-              <p id="cell-stage-description" class="text-xs sm:text-sm text-emerald-300 mt-0.5">
+        <div id="controls-mode-b" class="hidden space-y-5">
+          <!-- Stage Narration & Animated Mitosis Player Bar -->
+          <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 bg-[#0b1120] border border-gray-800 rounded-2xl p-4">
+            <div class="space-y-1">
+              <div class="flex items-center gap-2">
+                <span class="px-2 py-0.5 rounded bg-emerald-500/15 text-emerald-400 text-[10px] font-mono font-bold uppercase">Live Cytology Telemetry</span>
+                <span id="mitosis-cycle-badge" class="text-xs font-bold text-white">Onion Epidermal Architecture</span>
+              </div>
+              <p id="cell-stage-description" class="text-xs sm:text-sm text-gray-300 leading-relaxed">
                 Onion Epidermal Cell: Brick-like hexagonal cellulose cell wall, large central water vacuole, and flattened peripheral nucleus.
               </p>
             </div>
 
-            <!-- Exploded / Cutaway View Slider -->
-            <div class="w-full lg:w-72 bg-[#0b1120] border border-gray-800 rounded-xl p-3 shrink-0">
-              <div class="flex justify-between text-xs font-semibold mb-1.5">
-                <span class="text-cyan-300">Exploded / Cutaway View</span>
-                <span id="explode-readout" class="font-mono text-gray-300">0%</span>
+            <!-- Play Continuous Mitosis Cycle Button -->
+            <div class="flex items-center gap-2 shrink-0">
+              <button id="btn-play-mitosis" class="studio-btn flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold bg-gradient-to-r from-cyan-600 to-indigo-600 hover:from-cyan-500 hover:to-indigo-500 text-white shadow-lg shadow-indigo-950/50">
+                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z"/></svg>
+                <span id="play-mitosis-label">Play Mitosis Cycle</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Stage Selector Pills -->
+          <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5">
+            <button data-cell-stage="epidermal" class="cell-stage-btn studio-btn px-3 py-3 rounded-xl text-xs font-bold bg-gradient-to-r from-emerald-600 to-cyan-600 text-white border border-emerald-400/50 shadow-lg">
+              <div class="text-[10px] opacity-80 font-mono">TISSUE</div>
+              <div>Epidermal Cell</div>
+            </button>
+            <button data-cell-stage="interphase" class="cell-stage-btn studio-btn px-3 py-3 rounded-xl text-xs font-bold bg-[#0b1120] hover:bg-gray-800 text-gray-300 border border-gray-800">
+              <div class="text-[10px] text-indigo-400 font-mono">PHASE 01</div>
+              <div>Interphase</div>
+            </button>
+            <button data-cell-stage="prophase" class="cell-stage-btn studio-btn px-3 py-3 rounded-xl text-xs font-bold bg-[#0b1120] hover:bg-gray-800 text-gray-300 border border-gray-800">
+              <div class="text-[10px] text-emerald-400 font-mono">PHASE 02</div>
+              <div>Prophase</div>
+            </button>
+            <button data-cell-stage="metaphase" class="cell-stage-btn studio-btn px-3 py-3 rounded-xl text-xs font-bold bg-[#0b1120] hover:bg-gray-800 text-gray-300 border border-gray-800">
+              <div class="text-[10px] text-cyan-400 font-mono">PHASE 03</div>
+              <div>Metaphase</div>
+            </button>
+            <button data-cell-stage="anaphase" class="cell-stage-btn studio-btn px-3 py-3 rounded-xl text-xs font-bold bg-[#0b1120] hover:bg-gray-800 text-gray-300 border border-gray-800">
+              <div class="text-[10px] text-amber-400 font-mono">PHASE 04</div>
+              <div>Anaphase</div>
+            </button>
+            <button data-cell-stage="telophase" class="cell-stage-btn studio-btn px-3 py-3 rounded-xl text-xs font-bold bg-[#0b1120] hover:bg-gray-800 text-gray-300 border border-gray-800">
+              <div class="text-[10px] text-rose-400 font-mono">PHASE 05</div>
+              <div>Telophase</div>
+            </button>
+          </div>
+
+          <!-- Bottom Organelle Layer Toggles & Exploded Cutaway Deck -->
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 bg-[#0b1120] border border-gray-800 rounded-2xl p-4">
+            <!-- Organelle Layer Toggles -->
+            <div class="lg:col-span-6 flex flex-col justify-between space-y-2 bg-[#111827]/80 border border-gray-800/80 rounded-xl p-3.5">
+              <span class="text-xs font-semibold text-gray-300">Organelle Layer Visibility</span>
+              <div class="flex flex-wrap gap-2">
+                <button id="toggle-layer-wall" class="studio-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">
+                  ✓ Cell Wall
+                </button>
+                <button id="toggle-layer-membrane" class="studio-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-cyan-500/20 text-cyan-300 border border-cyan-500/40">
+                  ✓ Plasma Membrane
+                </button>
+                <button id="toggle-layer-cytoplasm" class="studio-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-indigo-500/20 text-indigo-300 border border-indigo-500/40">
+                  ✓ Organelle Granules
+                </button>
+              </div>
+            </div>
+
+            <!-- Exploded / Cutaway Slider with Quick Presets -->
+            <div class="lg:col-span-6 flex flex-col justify-between space-y-2 bg-[#111827]/80 border border-gray-800/80 rounded-xl p-3.5">
+              <div class="flex items-center justify-between text-xs font-semibold">
+                <span class="text-cyan-300">Exploded / Cutaway Dissection</span>
+                <div class="flex items-center gap-1.5">
+                  <button data-explode-preset="0" class="explode-preset-btn studio-btn px-2 py-0.5 rounded bg-gray-800 hover:bg-gray-700 text-[10px] text-gray-300">Intact</button>
+                  <button data-explode-preset="50" class="explode-preset-btn studio-btn px-2 py-0.5 rounded bg-gray-800 hover:bg-gray-700 text-[10px] text-gray-300">50%</button>
+                  <button data-explode-preset="100" class="explode-preset-btn studio-btn px-2 py-0.5 rounded bg-gray-800 hover:bg-gray-700 text-[10px] text-gray-300">Explode</button>
+                  <span id="explode-readout" class="font-mono text-emerald-400 ml-1">0%</span>
+                </div>
               </div>
               <input id="slider-explode" type="range" min="0" max="100" value="0" class="w-full" />
             </div>
           </div>
-
-          <!-- Stage Buttons -->
-          <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5">
-            <button data-cell-stage="epidermal" class="cell-stage-btn px-3 py-2.5 rounded-xl text-xs font-bold bg-gradient-to-r from-emerald-600 to-cyan-600 text-white border border-emerald-400/50 shadow">
-              Onion Epidermal Cell
-            </button>
-            <button data-cell-stage="interphase" class="cell-stage-btn px-3 py-2.5 rounded-xl text-xs font-bold bg-[#0b1120] hover:bg-gray-800 text-gray-300 border border-gray-700">
-              Interphase
-            </button>
-            <button data-cell-stage="prophase" class="cell-stage-btn px-3 py-2.5 rounded-xl text-xs font-bold bg-[#0b1120] hover:bg-gray-800 text-gray-300 border border-gray-700">
-              Prophase
-            </button>
-            <button data-cell-stage="metaphase" class="cell-stage-btn px-3 py-2.5 rounded-xl text-xs font-bold bg-[#0b1120] hover:bg-gray-800 text-gray-300 border border-gray-700">
-              Metaphase
-            </button>
-            <button data-cell-stage="anaphase" class="cell-stage-btn px-3 py-2.5 rounded-xl text-xs font-bold bg-[#0b1120] hover:bg-gray-800 text-gray-300 border border-gray-700">
-              Anaphase
-            </button>
-            <button data-cell-stage="telophase" class="cell-stage-btn px-3 py-2.5 rounded-xl text-xs font-bold bg-[#0b1120] hover:bg-gray-800 text-gray-300 border border-gray-700">
-              Telophase
-            </button>
-          </div>
+        </div>
         </div>
       </div>
     </section>
 
   </main>
+
+  <!-- ===================================================================== -->
+  <!-- FULL-SCREEN SPLIT-SCREEN VIRTUAL LAB STUDIO MODAL                     -->
+  <!-- Left: Live 3D Simulation Stage | Right: Interactive Experiment Deck   -->
+  <!-- ===================================================================== -->
+  <div id="virtual-lab-modal" class="fixed inset-0 z-50 hidden bg-[#070b14] flex flex-col">
+    <!-- Top Studio Header Bar -->
+    <div class="shrink-0 px-4 sm:px-6 py-3 bg-[#0b1120] border-b border-gray-800 flex items-center justify-between gap-3">
+      <div class="flex items-center gap-3">
+        <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="text-sm sm:text-base font-extrabold tracking-tight bg-gradient-to-r from-emerald-400 to-cyan-400 bg-clip-text text-transparent">
+              DIGITALCLASSES DIGILAB
+            </span>
+            <span class="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-cyan-500/15 text-cyan-300 border border-cyan-500/30">
+              LIVE 3D VIRTUAL LAB
+            </span>
+          </div>
+          <p class="text-[11px] text-gray-400 hidden sm:block">Apply controls on the right panel and observe live 3D changes on the left viewport</p>
+        </div>
+      </div>
+
+      <button id="btn-close-vlab" type="button" class="studio-btn flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold bg-gray-800 hover:bg-rose-600 text-gray-200 hover:text-white border border-gray-700 transition">
+        <span>Exit Virtual Lab</span>
+        <span>✕</span>
+      </button>
+    </div>
+
+    <!-- Split-Screen Body: Left = 3D Viewport, Right = Controls Sidebar -->
+    <div class="flex-1 min-h-0 flex flex-col lg:flex-row overflow-hidden">
+      <!-- LEFT SIDE: LIVE 3D SIMULATION STAGE -->
+      <div id="vlab-left-stage" class="flex-1 min-h-[45vh] lg:min-h-0 p-3 sm:p-4 bg-[#070b14] flex flex-col">
+        <!-- #three-container gets mounted here when Virtual Lab opens -->
+      </div>
+
+      <!-- RIGHT SIDE: INTERACTIVE EXPERIMENT CONTROLS PANEL -->
+      <aside class="w-full lg:w-[440px] xl:w-[480px] shrink-0 bg-[#0d1424] border-t lg:border-t-0 lg:border-l border-gray-800 flex flex-col min-h-0 max-h-[55vh] lg:max-h-none">
+        <div class="px-4 py-3 bg-[#111827] border-b border-gray-800 flex items-center justify-between gap-2 shrink-0">
+          <span class="text-xs font-bold uppercase tracking-wider text-emerald-400 flex items-center gap-1.5">
+            <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+            Experiment Control Console
+          </span>
+          <div id="vlab-mode-switcher-slot"></div>
+        </div>
+        <div id="vlab-right-controls" class="flex-1 overflow-y-auto p-4 space-y-4">
+          <!-- #controls-mode-a & #controls-mode-b get mounted here when Virtual Lab opens -->
+        </div>
+      </aside>
+    </div>
+  </div>
 
   <!-- ===================================================================== -->
   <!-- LIGHTBOX MODAL FOR SPECIMEN MICROGRAPHS                               -->
@@ -1587,1091 +1793,24 @@
     let scene, camera, renderer;
     let current3DMode = 'microscope'; // 'microscope' or 'cell'
     let autoRotate = false;
-    let showLabels = true;
+    let showLabels = false;
     let explodeFactor = 0;
-
-    // Camera spherical orbit state (custom smooth mouse + touch orbit)
-    const camState = {
-      theta: 0.55,
-      phi: 1.05,
-      radius: 11.5,
-      target: new THREE.Vector3(0, 1.8, 0),
-      isDragging: false,
-      lastX: 0,
-      lastY: 0,
-      pinchDist: 0
-    };
-
-    // 3D Groups & Interactive References
-    let workbenchGroup, cellExplorerGroup;
-    let slideMesh, onionSampleMesh, stainDropMesh, stainPoolMesh, coverslipMesh, dropperMesh, lightBeamMesh;
-    let prepStep = 0;
-    let focusValue = 50;
-    let currentObjective = '400x';
-
-    // Mode B Cellular References
-    let cellWallGroup, plasmaMembraneMesh, vacuoleMesh, nuclearEnvelopeMesh, nucleolusMesh, cellPlateMesh;
-    let chromosomeObjects = [];
-    let spindleLines = [];
-    let cytoplasmParticles;
-    let currentCellStage = 'epidermal';
-    let activeCallouts = [];
-
-    const stageDescriptions = {
-      epidermal: 'Onion Epidermal Cell: Brick-like hexagonal cellulose cell wall, large central water vacuole, and flattened peripheral nucleus.',
-      interphase: 'Interphase: Intact nuclear envelope enclosing uncoiled chromatin threads and a dense spherical nucleolus.',
-      prophase: 'Prophase: Chromatin condenses into 8 pairs of X-shaped sister chromatids; nuclear membrane dissolves.',
-      metaphase: 'Metaphase: All twin-chromatid chromosomes align along the central equatorial Metaphase Plate attached to spindle fibers.',
-      anaphase: 'Anaphase: Centromeres split; separated V-shaped daughter chromatids are pulled rapidly toward opposite poles.',
-      telophase: 'Telophase & Cytokinesis: Two daughter nuclei reconstitute at opposite poles while a central cell plate divides the cytoplasm.'
-    };
-
-    function init3DLab() {
-      const container = document.getElementById('three-container');
-      if (!window.THREE) {
-        document.getElementById('webgl-fallback').classList.remove('hidden');
-        return;
-      }
-
-      try {
-        scene = new THREE.Scene();
-        scene.fog = new THREE.FogExp2(0x070b14, 0.025);
-
-        const width = container.clientWidth;
-        const height = container.clientHeight;
-        camera = new THREE.PerspectiveCamera(44, width / height, 0.1, 100);
-        updateCameraPosition();
-
-        renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-        renderer.setSize(width, height);
-        renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
-        renderer.shadowMap.enabled = true;
-        container.insertBefore(renderer.domElement, container.firstChild);
-
-        // Studio Scientific Lighting
-        const hemiLight = new THREE.HemisphereLight(0xe0f2fe, 0x0f172a, 0.85);
-        scene.add(hemiLight);
-
-        const keyLight = new THREE.DirectionalLight(0xffffff, 1.15);
-        keyLight.position.set(7, 12, 8);
-        keyLight.castShadow = true;
-        scene.add(keyLight);
-
-        const rimLight = new THREE.DirectionalLight(0x06b6d4, 0.65);
-        rimLight.position.set(-8, 6, -6);
-        scene.add(rimLight);
-
-        const emeraldAccent = new THREE.PointLight(0x10b981, 0.5, 20);
-        emeraldAccent.position.set(0, 4, 5);
-        scene.add(emeraldAccent);
-
-        // Build Both 3D Scenes
-        buildModeA_MicroscopeWorkbench();
-        buildModeB_OnionCellExplorer();
-
-        // Set initial visibility
-        workbenchGroup.visible = true;
-        cellExplorerGroup.visible = false;
-        setModeACallouts();
-
-        // Setup Controls & Resize
-        setup3DOrbitControls(container);
-        setup3DUIControls();
-        drawPIPEyepiece();
-
-        window.addEventListener('resize', on3DResize);
-      } catch (err) {
-        console.error('3D Initialization Error:', err);
-        document.getElementById('webgl-fallback').classList.remove('hidden');
-      }
-    }
-
-    function updateCameraPosition() {
-      if (!camera) return;
-      camState.phi = Math.max(0.25, Math.min(Math.PI * 0.48, camState.phi));
-      camState.radius = Math.max(4.5, Math.min(20, camState.radius));
-
-      camera.position.x = camState.target.x + camState.radius * Math.sin(camState.phi) * Math.sin(camState.theta);
-      camera.position.y = camState.target.y + camState.radius * Math.cos(camState.phi);
-      camera.position.z = camState.target.z + camState.radius * Math.sin(camState.phi) * Math.cos(camState.theta);
-      camera.lookAt(camState.target);
-    }
-
-    function setup3DOrbitControls(domElem) {
-      domElem.addEventListener('mousedown', (e) => {
-        camState.isDragging = true;
-        camState.lastX = e.clientX;
-        camState.lastY = e.clientY;
-      });
-
-      window.addEventListener('mousemove', (e) => {
-        if (!camState.isDragging) return;
-        const dx = e.clientX - camState.lastX;
-        const dy = e.clientY - camState.lastY;
-        camState.lastX = e.clientX;
-        camState.lastY = e.clientY;
-        camState.theta -= dx * 0.008;
-        camState.phi -= dy * 0.008;
-        updateCameraPosition();
-      });
-
-      window.addEventListener('mouseup', () => {
-        camState.isDragging = false;
-      });
-
-      domElem.addEventListener('wheel', (e) => {
-        e.preventDefault();
-        camState.radius += e.deltaY * 0.008;
-        updateCameraPosition();
-      }, { passive: false });
-
-      // Touch support (1-finger orbit, 2-finger pinch zoom)
-      domElem.addEventListener('touchstart', (e) => {
-        if (e.touches.length === 1) {
-          camState.isDragging = true;
-          camState.lastX = e.touches[0].clientX;
-          camState.lastY = e.touches[0].clientY;
-        } else if (e.touches.length === 2) {
-          camState.isDragging = false;
-          camState.pinchDist = Math.hypot(
-            e.touches[0].clientX - e.touches[1].clientX,
-            e.touches[0].clientY - e.touches[1].clientY
-          );
-        }
-      }, { passive: true });
-
-      domElem.addEventListener('touchmove', (e) => {
-        if (e.touches.length === 1 && camState.isDragging) {
-          const dx = e.touches[0].clientX - camState.lastX;
-          const dy = e.touches[0].clientY - camState.lastY;
-          camState.lastX = e.touches[0].clientX;
-          camState.lastY = e.touches[0].clientY;
-          camState.theta -= dx * 0.009;
-          camState.phi -= dy * 0.009;
-          updateCameraPosition();
-        } else if (e.touches.length === 2) {
-          const dist = Math.hypot(
-            e.touches[0].clientX - e.touches[1].clientX,
-            e.touches[0].clientY - e.touches[1].clientY
-          );
-          const delta = camState.pinchDist - dist;
-          camState.pinchDist = dist;
-          camState.radius += delta * 0.025;
-          updateCameraPosition();
-        }
-      }, { passive: true });
-
-      domElem.addEventListener('touchend', () => {
-        camState.isDragging = false;
-      });
-    }
-
-    /**
-     * MODE A: 3D VIRTUAL SLIDE PREP & COMPOUND MICROSCOPE
-     */
-    function buildModeA_MicroscopeWorkbench() {
-      workbenchGroup = new THREE.Group();
-      scene.add(workbenchGroup);
-
-      // Laboratory Granite Workbench Surface
-      const tableGeo = new THREE.BoxGeometry(14, 0.4, 9);
-      const tableMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.65, metalness: 0.15 });
-      const table = new THREE.Mesh(tableGeo, tableMat);
-      table.position.y = -0.2;
-      table.receiveShadow = true;
-      workbenchGroup.add(table);
-
-      // Subtle Grid Trim on Workbench
-      const gridHelper = new THREE.GridHelper(13, 13, 0x06b6d4, 0x1e293b);
-      gridHelper.position.y = 0.01;
-      workbenchGroup.add(gridHelper);
-
-      // --- COMPOUND MICROSCOPE ASSEMBLY (Positioned at x = -1.6) ---
-      const scope = new THREE.Group();
-      scope.position.set(-1.6, 0, 0);
-      workbenchGroup.add(scope);
-
-      const bodyMat = new THREE.MeshStandardMaterial({ color: 0xf1f5f9, roughness: 0.3, metalness: 0.2 });
-      const darkMetalMat = new THREE.MeshStandardMaterial({ color: 0x1f2937, roughness: 0.35, metalness: 0.7 });
-      const chromeMat = new THREE.MeshStandardMaterial({ color: 0x94a3b8, roughness: 0.2, metalness: 0.9 });
-
-      // Heavy Base
-      const base = new THREE.Mesh(new THREE.BoxGeometry(2.6, 0.35, 3.4), bodyMat);
-      base.position.set(0, 0.175, 0.2);
-      scope.add(base);
-
-      // Sub-stage Illuminator Lens & Glowing Emitter
-      const lampHousing = new THREE.Mesh(new THREE.CylinderGeometry(0.45, 0.55, 0.28, 24), darkMetalMat);
-      lampHousing.position.set(0, 0.42, 0.6);
-      scope.add(lampHousing);
-
-      const lampLens = new THREE.Mesh(
-        new THREE.CylinderGeometry(0.36, 0.36, 0.06, 24),
-        new THREE.MeshBasicMaterial({ color: 0x67e8f9 })
-      );
-      lampLens.position.set(0, 0.56, 0.6);
-      scope.add(lampLens);
-
-      // Illuminator Light Cone (Activated in Step 4)
-      const beamGeo = new THREE.CylinderGeometry(0.18, 0.42, 1.5, 24, 1, true);
-      const beamMat = new THREE.MeshBasicMaterial({
-        color: 0x38bdf8,
-        transparent: true,
-        opacity: 0.0,
-        side: THREE.DoubleSide
-      });
-      lightBeamMesh = new THREE.Mesh(beamGeo, beamMat);
-      lightBeamMesh.position.set(0, 1.32, 0.6);
-      scope.add(lightBeamMesh);
-
-      // Curved Arm Pillar
-      const lowerArm = new THREE.Mesh(new THREE.BoxGeometry(0.55, 2.6, 0.75), bodyMat);
-      lowerArm.position.set(0, 1.55, -0.95);
-      lowerArm.rotation.x = -0.14;
-      scope.add(lowerArm);
-
-      const upperArm = new THREE.Mesh(new THREE.BoxGeometry(0.55, 2.2, 0.75), bodyMat);
-      upperArm.position.set(0, 3.65, -0.55);
-      upperArm.rotation.x = 0.28;
-      scope.add(upperArm);
-
-      // Mechanical Stage + Stage Clips
-      const stage = new THREE.Mesh(new THREE.BoxGeometry(2.2, 0.14, 2.1), darkMetalMat);
-      stage.position.set(0, 2.05, 0.45);
-      scope.add(stage);
-
-      // Stage aperture hole
-      const aperture = new THREE.Mesh(
-        new THREE.CylinderGeometry(0.24, 0.24, 0.15, 20),
-        new THREE.MeshBasicMaterial({ color: 0x0ea5e9 })
-      );
-      aperture.position.set(0, 2.05, 0.6);
-      scope.add(aperture);
-
-      // Stage Clips
-      [-0.55, 0.55].forEach(cx => {
-        const clip = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.04, 0.95), chromeMat);
-        clip.position.set(cx, 2.14, 0.55);
-        scope.add(clip);
-      });
-
-      // Coarse & Fine Focus Knobs on both sides
-      [-0.38, 0.38].forEach(kx => {
-        const coarseKnob = new THREE.Mesh(new THREE.CylinderGeometry(0.34, 0.34, 0.18, 24), darkMetalMat);
-        coarseKnob.rotation.z = Math.PI / 2;
-        coarseKnob.position.set(kx, 1.55, -0.85);
-        scope.add(coarseKnob);
-
-        const fineKnob = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.2, 0.28, 24), chromeMat);
-        fineKnob.rotation.z = Math.PI / 2;
-        fineKnob.position.set(kx * 1.15, 1.55, -0.85);
-        scope.add(fineKnob);
-      });
-
-      // Head & Inclined Eyepiece Tube
-      const head = new THREE.Mesh(new THREE.CylinderGeometry(0.45, 0.48, 0.65, 24), bodyMat);
-      head.position.set(0, 4.65, 0.35);
-      scope.add(head);
-
-      const eyepieceTube = new THREE.Mesh(new THREE.CylinderGeometry(0.22, 0.24, 1.35, 20), darkMetalMat);
-      eyepieceTube.position.set(0, 5.45, 0.05);
-      eyepieceTube.rotation.x = -0.35;
-      scope.add(eyepieceTube);
-
-      const eyepieceRim = new THREE.Mesh(new THREE.CylinderGeometry(0.27, 0.27, 0.16, 20), chromeMat);
-      eyepieceRim.position.set(0, 6.08, -0.18);
-      eyepieceRim.rotation.x = -0.35;
-      scope.add(eyepieceRim);
-
-      // Revolving Nosepiece & 3 Objective Lenses (10x, 40x, 100x)
-      const nosepiece = new THREE.Mesh(new THREE.CylinderGeometry(0.42, 0.48, 0.24, 24), darkMetalMat);
-      nosepiece.position.set(0, 4.2, 0.45);
-      scope.add(nosepiece);
-
-      const objConfigs = [
-        { angle: 0, len: 0.72, color: 0x06b6d4 },      // Active 40x (Cyan ring)
-        { angle: 2.1, len: 0.52, color: 0x10b981 },    // 10x (Emerald ring)
-        { angle: -2.1, len: 0.85, color: 0xf59e0b }    // 100x (Amber ring)
-      ];
-      objConfigs.forEach(cfg => {
-        const pivot = new THREE.Group();
-        pivot.position.set(0, 4.1, 0.45);
-        pivot.rotation.y = cfg.angle;
-        pivot.rotation.x = cfg.angle === 0 ? 0 : 0.35;
-
-        const barrel = new THREE.Mesh(new THREE.CylinderGeometry(0.11, 0.09, cfg.len, 16), chromeMat);
-        barrel.position.set(0, -cfg.len / 2, cfg.angle === 0 ? 0.15 : 0.22);
-        pivot.add(barrel);
-
-        const ring = new THREE.Mesh(
-          new THREE.CylinderGeometry(0.115, 0.115, 0.08, 16),
-          new THREE.MeshBasicMaterial({ color: cfg.color })
-        );
-        ring.position.set(0, -cfg.len * 0.7, cfg.angle === 0 ? 0.15 : 0.22);
-        pivot.add(ring);
-
-        scope.add(pivot);
-      });
-
-      // --- SLIDE PREPARATION STATION (Right side of workbench x = +2.3) ---
-      // Glass Slide
-      slideMesh = new THREE.Mesh(
-        new THREE.BoxGeometry(1.9, 0.05, 0.72),
-        new THREE.MeshPhysicalMaterial({
-          color: 0xe0f2fe,
-          transparent: true,
-          opacity: 0.55,
-          roughness: 0.1,
-          metalness: 0.1
-        })
-      );
-      slideMesh.position.set(2.3, 0.04, 0.8);
-      workbenchGroup.add(slideMesh);
-
-      // Onion Root Tip Specimen (child of slide so it moves onto microscope stage!)
-      onionSampleMesh = new THREE.Mesh(
-        new THREE.ConeGeometry(0.08, 0.38, 12),
-        new THREE.MeshStandardMaterial({ color: 0xfef3c7, roughness: 0.5 })
-      );
-      onionSampleMesh.rotation.z = Math.PI / 2;
-      onionSampleMesh.position.set(0.15, 0.06, 0);
-      onionSampleMesh.visible = false;
-      slideMesh.add(onionSampleMesh);
-
-      // Acetocarmine Stain Pool on Slide
-      stainPoolMesh = new THREE.Mesh(
-        new THREE.CylinderGeometry(0.24, 0.26, 0.02, 20),
-        new THREE.MeshBasicMaterial({ color: 0xe11d48, transparent: true, opacity: 0.85 })
-      );
-      stainPoolMesh.position.set(0.15, 0.04, 0);
-      stainPoolMesh.visible = false;
-      slideMesh.add(stainPoolMesh);
-
-      // Glass Coverslip
-      coverslipMesh = new THREE.Mesh(
-        new THREE.BoxGeometry(0.55, 0.02, 0.55),
-        new THREE.MeshPhysicalMaterial({ color: 0xbae6fd, transparent: true, opacity: 0.65 })
-      );
-      coverslipMesh.position.set(0.15, 0.065, 0);
-      coverslipMesh.visible = false;
-      slideMesh.add(coverslipMesh);
-
-      // Acetocarmine Reagent Bottle & Dropper on Workbench
-      const bottle = new THREE.Mesh(
-        new THREE.CylinderGeometry(0.42, 0.45, 1.15, 20),
-        new THREE.MeshStandardMaterial({ color: 0x881337, roughness: 0.35 })
-      );
-      bottle.position.set(3.4, 0.58, -1.1);
-      workbenchGroup.add(bottle);
-
-      const bottleLabel = new THREE.Mesh(
-        new THREE.CylinderGeometry(0.455, 0.455, 0.48, 20, 1, true, 0, Math.PI),
-        new THREE.MeshBasicMaterial({ color: 0xf8fafc })
-      );
-      bottleLabel.position.set(3.4, 0.58, -1.1);
-      workbenchGroup.add(bottleLabel);
-
-      // Floating Dropper Pipette
-      dropperMesh = new THREE.Group();
-      const glassPipette = new THREE.Mesh(
-        new THREE.CylinderGeometry(0.06, 0.02, 0.95, 12),
-        new THREE.MeshPhysicalMaterial({ color: 0xe0f2fe, transparent: true, opacity: 0.75 })
-      );
-      const rubberBulb = new THREE.Mesh(
-        new THREE.SphereGeometry(0.14, 14, 14),
-        new THREE.MeshStandardMaterial({ color: 0x10b981 })
-      );
-      rubberBulb.position.y = 0.52;
-      stainDropMesh = new THREE.Mesh(
-        new THREE.SphereGeometry(0.05, 12, 12),
-        new THREE.MeshBasicMaterial({ color: 0xf43f5e })
-      );
-      stainDropMesh.position.y = -0.52;
-      dropperMesh.add(glassPipette, rubberBulb, stainDropMesh);
-      dropperMesh.position.set(3.4, 1.5, -1.1);
-      workbenchGroup.add(dropperMesh);
-    }
-
-    /**
-     * MODE B: 3D INTERACTIVE ONION CELL & MITOSIS EXPLORER
-     */
-    function buildModeB_OnionCellExplorer() {
-      cellExplorerGroup = new THREE.Group();
-      cellExplorerGroup.position.set(0, 2.0, 0);
-      scene.add(cellExplorerGroup);
-
-      // 1. Hexagonal/Polygonal Translucent Cellulose Cell Wall
-      cellWallGroup = new THREE.Group();
-      cellExplorerGroup.add(cellWallGroup);
-
-      const wallMat = new THREE.MeshPhysicalMaterial({
-        color: 0x10b981,
-        transparent: true,
-        opacity: 0.24,
-        roughness: 0.25,
-        metalness: 0.05,
-        side: THREE.DoubleSide
-      });
-
-      const cellWallGeo = new THREE.CylinderGeometry(2.6, 2.6, 3.6, 6, 1, false);
-      const cellWallMesh = new THREE.Mesh(cellWallGeo, wallMat);
-      cellWallGroup.add(cellWallMesh);
-
-      // Crisp Glowing Cellulose Edge Wireframe
-      const edges = new THREE.EdgesGeometry(cellWallGeo);
-      const lineMat = new THREE.LineBasicMaterial({ color: 0x34d399, transparent: true, opacity: 0.75 });
-      const wallWireframe = new THREE.LineSegments(edges, lineMat);
-      cellWallGroup.add(wallWireframe);
-
-      // 2. Inner Plasma Membrane
-      const membraneGeo = new THREE.CylinderGeometry(2.42, 2.42, 3.38, 6);
-      const membraneMat = new THREE.MeshBasicMaterial({
-        color: 0x06b6d4,
-        wireframe: true,
-        transparent: true,
-        opacity: 0.18
-      });
-      plasmaMembraneMesh = new THREE.Mesh(membraneGeo, membraneMat);
-      cellExplorerGroup.add(plasmaMembraneMesh);
-
-      // 3. Cytoplasm Ribosome/Organelle Particles
-      const partCount = 140;
-      const posArr = new Float32Array(partCount * 3);
-      for (let i = 0; i < partCount; i++) {
-        const r = 1.4 + Math.random() * 0.85;
-        const a = Math.random() * Math.PI * 2;
-        posArr[i * 3] = Math.cos(a) * r;
-        posArr[i * 3 + 1] = (Math.random() - 0.5) * 2.8;
-        posArr[i * 3 + 2] = Math.sin(a) * r;
-      }
-      const partGeo = new THREE.BufferGeometry();
-      partGeo.setAttribute('position', new THREE.BufferAttribute(posArr, 3));
-      const partMat = new THREE.PointsMaterial({ color: 0x67e8f9, size: 0.07, transparent: true, opacity: 0.65 });
-      cytoplasmParticles = new THREE.Points(partGeo, partMat);
-      cellExplorerGroup.add(cytoplasmParticles);
-
-      // 4. Large Central Vacuole (Prominent in Onion Epidermal Cell)
-      const vacGeo = new THREE.SphereGeometry(1.45, 28, 24);
-      vacGeo.scale(1.0, 1.15, 0.9);
-      const vacMat = new THREE.MeshPhysicalMaterial({
-        color: 0x38bdf8,
-        transparent: true,
-        opacity: 0.34,
-        roughness: 0.1
-      });
-      vacuoleMesh = new THREE.Mesh(vacGeo, vacMat);
-      cellExplorerGroup.add(vacuoleMesh);
-
-      // 5. Translucent Nuclear Envelope
-      const nucGeo = new THREE.SphereGeometry(1.15, 28, 24);
-      const nucMat = new THREE.MeshPhysicalMaterial({
-        color: 0x818cf8,
-        transparent: true,
-        opacity: 0.32,
-        roughness: 0.2
-      });
-      nuclearEnvelopeMesh = new THREE.Mesh(nucGeo, nucMat);
-      cellExplorerGroup.add(nuclearEnvelopeMesh);
-
-      // Nucleolus
-      nucleolusMesh = new THREE.Mesh(
-        new THREE.SphereGeometry(0.32, 18, 18),
-        new THREE.MeshStandardMaterial({ color: 0xf43f5e, emissive: 0x881337, emissiveIntensity: 0.4 })
-      );
-      nuclearEnvelopeMesh.add(nucleolusMesh);
-
-      // 6. Equatorial Cell Plate (Visible in Telophase)
-      cellPlateMesh = new THREE.Mesh(
-        new THREE.CylinderGeometry(2.35, 2.35, 0.08, 6),
-        new THREE.MeshBasicMaterial({ color: 0xfbbf24, transparent: true, opacity: 0.78 })
-      );
-      cellPlateMesh.visible = false;
-      cellExplorerGroup.add(cellPlateMesh);
-
-      // 7. Create 8 Pairs of 3D Twin-Chromatid Chromosomes + Spindle Fibers
-      const chromMatA = new THREE.MeshStandardMaterial({ color: 0xf43f5e, roughness: 0.3, emissive: 0x881337, emissiveIntensity: 0.35 });
-      const chromMatB = new THREE.MeshStandardMaterial({ color: 0xfb7185, roughness: 0.3, emissive: 0x9f1239, emissiveIntensity: 0.35 });
-      const centromereMat = new THREE.MeshBasicMaterial({ color: 0xfef08a });
-
-      for (let i = 0; i < 8; i++) {
-        const pairGroup = new THREE.Group();
-
-        // Left Chromatid
-        const cLeft = new THREE.Mesh(new THREE.CylinderGeometry(0.065, 0.065, 0.72, 12), chromMatA);
-        cLeft.position.x = -0.08;
-        cLeft.rotation.z = 0.22;
-
-        // Right Chromatid
-        const cRight = new THREE.Mesh(new THREE.CylinderGeometry(0.065, 0.065, 0.72, 12), chromMatB);
-        cRight.position.x = 0.08;
-        cRight.rotation.z = -0.22;
-
-        // Centromere bead
-        const centromere = new THREE.Mesh(new THREE.SphereGeometry(0.085, 12, 12), centromereMat);
-
-        pairGroup.add(cLeft, cRight, centromere);
-        cellExplorerGroup.add(pairGroup);
-
-        chromosomeObjects.push({
-          group: pairGroup,
-          cLeft,
-          cRight,
-          centromere,
-          angle: (i / 8) * Math.PI * 2
-        });
-
-        // Bipolar Spindle Fiber Line
-        const lineGeo = new THREE.BufferGeometry().setFromPoints([
-          new THREE.Vector3(0, 1.55, 0),
-          new THREE.Vector3(0, 0, 0),
-          new THREE.Vector3(0, -1.55, 0)
-        ]);
-        const spindle = new THREE.Line(
-          lineGeo,
-          new THREE.LineBasicMaterial({ color: 0x67e8f9, transparent: true, opacity: 0.45 })
-        );
-        spindle.visible = false;
-        cellExplorerGroup.add(spindle);
-        spindleLines.push(spindle);
-      }
-
-      applyCellStage('epidermal');
-    }
-
-    /**
-     * Update Mode B 3D Geometry for Selected Cellular / Mitotic Stage
-     */
-    function applyCellStage(stage) {
-      currentCellStage = stage;
-      document.getElementById('cell-stage-description').textContent = stageDescriptions[stage] || '';
-      document.getElementById('hud-stage-badge').textContent = `Stage: ${stage.toUpperCase()}`;
-
-      // Update button highlights
-      document.querySelectorAll('.cell-stage-btn').forEach(btn => {
-        const isSelected = btn.getAttribute('data-cell-stage') === stage;
-        btn.className = isSelected
-          ? 'cell-stage-btn px-3 py-2.5 rounded-xl text-xs font-bold bg-gradient-to-r from-emerald-600 to-cyan-600 text-white border border-emerald-400/50 shadow'
-          : 'cell-stage-btn px-3 py-2.5 rounded-xl text-xs font-bold bg-[#0b1120] hover:bg-gray-800 text-gray-300 border border-gray-700';
-      });
-
-      // Reset default visibilities
-      vacuoleMesh.visible = false;
-      nuclearEnvelopeMesh.visible = false;
-      nuclearEnvelopeMesh.position.set(0, 0, 0);
-      nuclearEnvelopeMesh.scale.set(1, 1, 1);
-      nucleolusMesh.visible = true;
-      cellPlateMesh.visible = false;
-
-      chromosomeObjects.forEach((ch, idx) => {
-        ch.group.visible = true;
-        ch.group.rotation.set(0, 0, 0);
-        ch.cLeft.position.set(-0.08, 0, 0);
-        ch.cLeft.rotation.set(0, 0, 0.22);
-        ch.cRight.position.set(0.08, 0, 0);
-        ch.cRight.rotation.set(0, 0, -0.22);
-        ch.centromere.visible = true;
-        spindleLines[idx].visible = false;
-      });
-
-      if (stage === 'epidermal') {
-        vacuoleMesh.visible = true;
-        nuclearEnvelopeMesh.visible = true;
-        nuclearEnvelopeMesh.scale.set(0.46, 0.35, 0.46);
-        nuclearEnvelopeMesh.position.set(1.75, 0.4, 0.65);
-        chromosomeObjects.forEach(ch => { ch.group.visible = false; });
-      } else if (stage === 'interphase') {
-        nuclearEnvelopeMesh.visible = true;
-        chromosomeObjects.forEach((ch, idx) => {
-          const a = idx * 0.8;
-          ch.group.position.set(Math.cos(a) * 0.42, ((idx % 3) - 1) * 0.35, Math.sin(a) * 0.42);
-          ch.group.rotation.set(idx, idx * 0.7, 0.5);
-        });
-      } else if (stage === 'prophase') {
-        nuclearEnvelopeMesh.visible = true;
-        nuclearEnvelopeMesh.material.opacity = 0.16;
-        nucleolusMesh.visible = false;
-        chromosomeObjects.forEach((ch, idx) => {
-          const r = 0.62;
-          ch.group.position.set(Math.cos(ch.angle) * r, ((idx % 2) - 0.5) * 0.45, Math.sin(ch.angle) * r);
-          ch.group.rotation.set(0.4, ch.angle, 0.35);
-          spindleLines[idx].visible = true;
-        });
-      } else if (stage === 'metaphase') {
-        chromosomeObjects.forEach((ch, idx) => {
-          const r = 1.15;
-          const x = Math.cos(ch.angle) * r;
-          const z = Math.sin(ch.angle) * r;
-          ch.group.position.set(x, 0, z);
-          ch.group.rotation.set(0, -ch.angle, 0);
-          spindleLines[idx].visible = true;
-          spindleLines[idx].geometry.setFromPoints([
-            new THREE.Vector3(0, 1.55, 0),
-            new THREE.Vector3(x, 0, z),
-            new THREE.Vector3(0, -1.55, 0)
-          ]);
-        });
-      } else if (stage === 'anaphase') {
-        chromosomeObjects.forEach((ch, idx) => {
-          const r = 0.85;
-          const x = Math.cos(ch.angle) * r;
-          const z = Math.sin(ch.angle) * r;
-          ch.group.position.set(x, 0, z);
-          ch.centromere.visible = false;
-
-          // Sister chromatids pulled to opposite poles (+Y and -Y)
-          ch.cLeft.position.set(0, 0.88, 0);
-          ch.cLeft.rotation.set(0.35, ch.angle, 0);
-          ch.cRight.position.set(0, -0.88, 0);
-          ch.cRight.rotation.set(-0.35, ch.angle, 0);
-
-          spindleLines[idx].visible = true;
-          spindleLines[idx].geometry.setFromPoints([
-            new THREE.Vector3(0, 1.55, 0),
-            new THREE.Vector3(x, 0.88, z),
-            new THREE.Vector3(x, -0.88, z),
-            new THREE.Vector3(0, -1.55, 0)
-          ]);
-        });
-      } else if (stage === 'telophase') {
-        cellPlateMesh.visible = true;
-        chromosomeObjects.forEach((ch, idx) => {
-          const r = 0.45;
-          const x = Math.cos(ch.angle) * r;
-          const z = Math.sin(ch.angle) * r;
-          ch.group.position.set(x, 0, z);
-          ch.centromere.visible = false;
-          ch.cLeft.position.set(0, 1.05, 0);
-          ch.cLeft.rotation.set(0.9, idx, 0.4);
-          ch.cRight.position.set(0, -1.05, 0);
-          ch.cRight.rotation.set(-0.9, idx, -0.4);
-        });
-      }
-
-      setModeBCallouts();
-    }
-
-    /**
-     * Live Microscope Eyepiece PIP Canvas Renderer (Mode A)
-     */
-    function drawPIPEyepiece() {
-      const canvas = document.getElementById('pip-eyepiece-canvas');
-      if (!canvas) return;
-      const ctx = canvas.getContext('2d');
-      const w = canvas.width;
-      const h = canvas.height;
-      const cx = w / 2;
-      const cy = h / 2;
-
-      ctx.clearRect(0, 0, w, h);
-
-      // Illuminator background glow
-      const isLit = prepStep >= 4;
-      const bg = ctx.createRadialGradient(cx, cy, 10, cx, cy, cx);
-      if (isLit) {
-        bg.addColorStop(0, '#fff1f2');
-        bg.addColorStop(0.75, '#ffe4e6');
-        bg.addColorStop(1, '#fecdd3');
-      } else {
-        bg.addColorStop(0, '#1e293b');
-        bg.addColorStop(1, '#090d16');
-      }
-      ctx.fillStyle = bg;
-      ctx.fillRect(0, 0, w, h);
-
-      // Apply focus blur based on Fine Focus Slider (50 = razor sharp)
-      const blurPx = Math.abs(focusValue - 50) * 0.14;
-      ctx.save();
-      ctx.filter = `blur(${blurPx.toFixed(1)}px)`;
-
-      const zoomScale = currentObjective === '100x' ? 0.65 : (currentObjective === '1000x' ? 1.45 : 1.0);
-      ctx.translate(cx, cy);
-      ctx.scale(zoomScale, zoomScale);
-      ctx.translate(-cx, -cy);
-
-      if (prepStep === 1) {
-        // Unstained onion sample
-        ctx.strokeStyle = 'rgba(148, 163, 184, 0.55)';
-        ctx.lineWidth = 2;
-        for (let r = 0; r < 5; r++) {
-          for (let c = 0; c < 5; c++) {
-            ctx.strokeRect(c * 44, r * 44, 44, 44);
-          }
-        }
-      } else if (prepStep === 2) {
-        // Crimson stain drop before coverslip squash
-        ctx.fillStyle = 'rgba(225, 29, 72, 0.65)';
-        ctx.beginPath();
-        ctx.arc(cx, cy, 65, 0, Math.PI * 2);
-        ctx.fill();
-      } else if (prepStep >= 3) {
-        // Stained mitotic root tip cells monolayer!
-        const size = 44;
-        for (let r = 0; r < 5; r++) {
-          for (let c = 0; c < 5; c++) {
-            const x = c * size;
-            const y = r * size;
-            ctx.strokeStyle = isLit ? '#be123c' : '#881337';
-            ctx.lineWidth = 1.8;
-            ctx.strokeRect(x, y, size, size);
-
-            const mx = x + size / 2;
-            const my = y + size / 2;
-
-            if (r === 2 && c === 2) {
-              // Hero Metaphase Plate in center of field of view!
-              ctx.strokeStyle = isLit ? '#881337' : '#f43f5e';
-              ctx.lineWidth = 2.6;
-              for (let k = -11; k <= 11; k += 4) {
-                ctx.beginPath();
-                ctx.moveTo(mx + k, my - 6);
-                ctx.lineTo(mx + k, my + 6);
-                ctx.stroke();
-              }
-            } else if (r === 1 && c === 3) {
-              // Anaphase separation
-              ctx.strokeStyle = isLit ? '#881337' : '#f43f5e';
-              ctx.lineWidth = 2.2;
-              for (let k = -8; k <= 8; k += 5) {
-                ctx.beginPath();
-                ctx.moveTo(mx + k, my - 11);
-                ctx.lineTo(mx + k, my - 5);
-                ctx.moveTo(mx + k, my + 5);
-                ctx.lineTo(mx + k, my + 11);
-                ctx.stroke();
-              }
-            } else {
-              // Interphase nuclei
-              ctx.fillStyle = isLit ? 'rgba(157, 23, 77, 0.72)' : 'rgba(225, 29, 72, 0.45)';
-              ctx.beginPath();
-              ctx.arc(mx, my, 9, 0, Math.PI * 2);
-              ctx.fill();
-            }
-          }
-        }
-      }
-
-      ctx.restore();
-
-      // Eyepiece Crosshair Reticle
-      ctx.strokeStyle = isLit ? 'rgba(15, 23, 42, 0.35)' : 'rgba(103, 232, 249, 0.35)';
-      ctx.lineWidth = 1;
-      ctx.beginPath();
-      ctx.moveTo(cx, 12);
-      ctx.lineTo(cx, h - 12);
-      ctx.moveTo(12, cy);
-      ctx.lineTo(w - 12, cy);
-      ctx.stroke();
-    }
-
-    /**
-     * Execute Mode A 3D Slide Preparation Steps
-     */
-    function executePrepStep(step) {
-      prepStep = step;
-      document.querySelectorAll('.prep-step-btn').forEach(btn => {
-        const s = parseInt(btn.getAttribute('data-prep-step'), 10);
-        btn.className = s === step
-          ? 'prep-step-btn p-3.5 rounded-xl bg-emerald-950/70 border border-emerald-400 text-left transition shadow-lg'
-          : 'prep-step-btn p-3.5 rounded-xl bg-[#0b1120] hover:bg-gray-800/90 border border-gray-700 text-left transition';
-      });
-
-      const statusBadge = document.getElementById('hud-stage-badge');
-      const pipStatus = document.getElementById('pip-status-text');
-
-      if (step === 0) {
-        slideMesh.position.set(2.3, 0.04, 0.8);
-        onionSampleMesh.visible = false;
-        stainPoolMesh.visible = false;
-        coverslipMesh.visible = false;
-        dropperMesh.position.set(3.4, 1.5, -1.1);
-        lightBeamMesh.material.opacity = 0.0;
-        statusBadge.textContent = 'Step 0: Clean Slide on Workbench';
-        pipStatus.textContent = 'Blank Glass Slide';
-      } else if (step === 1) {
-        slideMesh.position.set(2.3, 0.04, 0.8);
-        onionSampleMesh.visible = true;
-        stainPoolMesh.visible = false;
-        coverslipMesh.visible = false;
-        dropperMesh.position.set(3.4, 1.5, -1.1);
-        lightBeamMesh.material.opacity = 0.0;
-        statusBadge.textContent = 'Step 1: Root Tip Placed on Slide';
-        pipStatus.textContent = 'Unstained Root Tip';
-      } else if (step === 2) {
-        slideMesh.position.set(2.3, 0.04, 0.8);
-        onionSampleMesh.visible = true;
-        stainPoolMesh.visible = true;
-        coverslipMesh.visible = false;
-        dropperMesh.position.set(2.45, 1.05, 0.8);
-        lightBeamMesh.material.opacity = 0.0;
-        statusBadge.textContent = 'Step 2: 2% Acetocarmine Stain Added';
-        pipStatus.textContent = 'Acetocarmine Stain';
-      } else if (step === 3) {
-        slideMesh.position.set(2.3, 0.04, 0.8);
-        onionSampleMesh.visible = true;
-        stainPoolMesh.visible = true;
-        coverslipMesh.visible = true;
-        dropperMesh.position.set(3.4, 1.5, -1.1);
-        lightBeamMesh.material.opacity = 0.0;
-        statusBadge.textContent = 'Step 3: Coverslip Mounted & Squashed';
-        pipStatus.textContent = 'Squashed Monolayer';
-      } else if (step === 4) {
-        // Move prepared slide directly onto the Compound Microscope stage!
-        slideMesh.position.set(-1.6, 2.15, 0.6);
-        onionSampleMesh.visible = true;
-        stainPoolMesh.visible = true;
-        coverslipMesh.visible = true;
-        dropperMesh.position.set(3.4, 1.5, -1.1);
-        lightBeamMesh.material.opacity = 0.28;
-        statusBadge.textContent = 'Step 4: Mounted on Stage & Illuminated';
-        pipStatus.textContent = 'Live 400x Mitosis View';
-      }
-
-      drawPIPEyepiece();
-    }
-
-    /**
-     * 3D Floating Callout Labels System
-     */
-    function setModeACallouts() {
-      activeCallouts = [
-        { text: '10x Ocular Eyepiece', pos: new THREE.Vector3(-1.6, 6.1, -0.2) },
-        { text: 'Revolving Nosepiece (40x)', pos: new THREE.Vector3(-1.6, 3.8, 0.6) },
-        { text: 'Mechanical Stage & Clips', pos: new THREE.Vector3(-2.6, 2.1, 0.6) },
-        { text: 'Sub-stage Illuminator', pos: new THREE.Vector3(-1.6, 0.6, 0.9) },
-        { text: '2% Acetocarmine Stain', pos: new THREE.Vector3(3.4, 1.2, -1.1) },
-        { text: 'Glass Slide & Coverslip', pos: new THREE.Vector3(2.3, 0.35, 0.8) }
-      ];
-    }
-
-    function setModeBCallouts() {
-      if (currentCellStage === 'epidermal') {
-        activeCallouts = [
-          { text: 'Cellulose Cell Wall', pos: new THREE.Vector3(-2.3, 3.4, 0.5) },
-          { text: 'Plasma Membrane', pos: new THREE.Vector3(2.2, 2.9, -0.6) },
-          { text: 'Large Central Vacuole', pos: new THREE.Vector3(-0.4, 2.1, 1.1) },
-          { text: 'Peripheral Nucleus', pos: new THREE.Vector3(1.85, 2.55, 0.65) }
-        ];
-      } else if (currentCellStage === 'metaphase') {
-        activeCallouts = [
-          { text: 'Cellulose Cell Wall', pos: new THREE.Vector3(-2.3, 3.4, 0.5) },
-          { text: 'Spindle Pole', pos: new THREE.Vector3(0, 3.65, 0) },
-          { text: 'Equatorial Metaphase Plate', pos: new THREE.Vector3(1.4, 2.0, 0.5) },
-          { text: 'Kinetochore Spindle Fibers', pos: new THREE.Vector3(-1.1, 2.75, 0.4) }
-        ];
-      } else if (currentCellStage === 'anaphase') {
-        activeCallouts = [
-          { text: 'Cellulose Cell Wall', pos: new THREE.Vector3(-2.3, 3.4, 0.5) },
-          { text: 'Poleward Sister Chromatids', pos: new THREE.Vector3(0.95, 2.95, 0.4) },
-          { text: 'Shortening Spindle Fibers', pos: new THREE.Vector3(-0.9, 1.25, 0.3) }
-        ];
-      } else if (currentCellStage === 'telophase') {
-        activeCallouts = [
-          { text: 'Reforming Daughter Nucleus', pos: new THREE.Vector3(0.6, 3.1, 0.3) },
-          { text: 'Forming Cell Plate (Cytokinesis)', pos: new THREE.Vector3(1.9, 2.0, 0.6) }
-        ];
-      } else {
-        activeCallouts = [
-          { text: 'Cellulose Cell Wall', pos: new THREE.Vector3(-2.3, 3.4, 0.5) },
-          { text: 'Nuclear Envelope', pos: new THREE.Vector3(1.1, 2.6, 0.4) },
-          { text: 'Condensing Chromatin', pos: new THREE.Vector3(-0.5, 2.0, 0.6) }
-        ];
-      }
-    }
-
-    function updateCalloutOverlay() {
-      const layer = document.getElementById('callout-layer');
-      if (!layer || !camera || !renderer) return;
-
-      if (!showLabels) {
-        layer.innerHTML = '';
-        return;
-      }
-
-      const width = renderer.domElement.clientWidth;
-      const height = renderer.domElement.clientHeight;
-
-      if (layer.children.length !== activeCallouts.length) {
-        layer.innerHTML = activeCallouts.map(c => `<div class="callout-label">${c.text}</div>`).join('');
-      }
-
-      activeCallouts.forEach((item, idx) => {
-        const el = layer.children[idx];
-        if (!el) return;
-        const projected = item.pos.clone().project(camera);
-        if (projected.z > 1) {
-          el.style.opacity = '0';
-          return;
-        }
-        const x = (projected.x * 0.5 + 0.5) * width;
-        const y = (-projected.y * 0.5 + 0.5) * height;
-        el.style.left = `${x}px`;
-        el.style.top = `${y}px`;
-        el.style.opacity = '1';
-      });
-    }
-
-    function setup3DUIControls() {
-      // Mode Switchers
-      document.getElementById('mode-btn-microscope').addEventListener('click', () => {
-        current3DMode = 'microscope';
-        workbenchGroup.visible = true;
-        cellExplorerGroup.visible = false;
-        document.getElementById('controls-mode-a').classList.remove('hidden');
-        document.getElementById('controls-mode-b').classList.add('hidden');
-        document.getElementById('pip-eyepiece-box').classList.remove('hidden');
-        document.getElementById('hud-mode-badge').textContent = 'MODE A • 3D WORKBENCH & COMPOUND MICROSCOPE';
-        document.getElementById('mode-btn-microscope').className = 'px-4 py-2 rounded-lg text-xs sm:text-sm font-bold bg-gradient-to-r from-emerald-600 to-cyan-600 text-white shadow transition';
-        document.getElementById('mode-btn-cell').className = 'px-4 py-2 rounded-lg text-xs sm:text-sm font-bold text-gray-300 hover:text-white transition';
-        camState.target.set(0, 1.8, 0);
-        camState.radius = 11.5;
-        updateCameraPosition();
-        setModeACallouts();
-      });
-
-      document.getElementById('mode-btn-cell').addEventListener('click', () => {
-        current3DMode = 'cell';
-        workbenchGroup.visible = false;
-        cellExplorerGroup.visible = true;
-        document.getElementById('controls-mode-a').classList.add('hidden');
-        document.getElementById('controls-mode-b').classList.remove('hidden');
-        document.getElementById('pip-eyepiece-box').classList.add('hidden');
-        document.getElementById('hud-mode-badge').textContent = 'MODE B • 3D PLANT CELL & MITOSIS EXPLORER';
-        document.getElementById('mode-btn-cell').className = 'px-4 py-2 rounded-lg text-xs sm:text-sm font-bold bg-gradient-to-r from-emerald-600 to-cyan-600 text-white shadow transition';
-        document.getElementById('mode-btn-microscope').className = 'px-4 py-2 rounded-lg text-xs sm:text-sm font-bold text-gray-300 hover:text-white transition';
-        camState.target.set(0, 2.0, 0);
-        camState.radius = 8.5;
-        updateCameraPosition();
-        applyCellStage(currentCellStage);
-      });
-
-      // Mode A Step Buttons
-      document.querySelectorAll('.prep-step-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-          const step = parseInt(btn.getAttribute('data-prep-step'), 10);
-          executePrepStep(step);
-        });
-      });
-
-      document.getElementById('btn-prep-reset').addEventListener('click', () => executePrepStep(0));
-
-      // Focus Slider & Objective Selector
-      document.getElementById('slider-focus').addEventListener('input', (e) => {
-        focusValue = parseInt(e.target.value, 10);
-        const sharpness = Math.max(0, 100 - Math.abs(focusValue - 50) * 2);
-        document.getElementById('focus-readout').textContent =
-          sharpness >= 92 ? `Optimal Focus (${sharpness}%)` : `Adjusting Focus (${sharpness}%)`;
-        drawPIPEyepiece();
-      });
-
-      document.querySelectorAll('.obj-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-          currentObjective = btn.getAttribute('data-obj');
-          document.getElementById('pip-mag-label').textContent = currentObjective;
-          document.querySelectorAll('.obj-btn').forEach(b => {
-            b.className = b === btn
-              ? 'obj-btn px-3 py-1.5 rounded-lg text-xs font-bold bg-cyan-600 text-white border border-cyan-400'
-              : 'obj-btn px-3 py-1.5 rounded-lg text-xs font-bold bg-gray-800 text-gray-300 border border-gray-700';
-          });
-          drawPIPEyepiece();
-        });
-      });
-
-      // Mode B Stage Buttons & Exploded Slider
-      document.querySelectorAll('.cell-stage-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-          applyCellStage(btn.getAttribute('data-cell-stage'));
-        });
-      });
-
-      document.getElementById('slider-explode').addEventListener('input', (e) => {
-        explodeFactor = parseInt(e.target.value, 10) / 100;
-        document.getElementById('explode-readout').textContent = `${Math.round(explodeFactor * 100)}%`;
-        if (cellWallGroup && plasmaMembraneMesh) {
-          cellWallGroup.scale.setScalar(1 + explodeFactor * 0.35);
-          cellWallGroup.position.y = explodeFactor * 0.65;
-          plasmaMembraneMesh.scale.setScalar(1 + explodeFactor * 0.16);
-        }
-      });
-
+// ... existing code ... -->
       // Shared HUD Buttons
-      document.getElementById('btn-toggle-rotate').addEventListener('click', (e) => {
+      document.getElementById('btn-toggle-rotate').addEventListener('click', () => {
         autoRotate = !autoRotate;
-        e.target.textContent = `Auto-Rotate: ${autoRotate ? 'ON' : 'OFF'}`;
+        document.getElementById('rotate-label').textContent = `Auto-Rotate: ${autoRotate ? 'ON' : 'OFF'}`;
       });
 
       document.getElementById('btn-toggle-labels').addEventListener('click', (e) => {
         showLabels = !showLabels;
-        e.target.textContent = `3D Labels: ${showLabels ? 'ON' : 'OFF'}`;
+        const btn = e.currentTarget;
+        document.getElementById('labels-label').textContent = `3D Labels: ${showLabels ? 'ON' : 'OFF'}`;
+        btn.className = showLabels
+          ? 'studio-btn flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-cyan-500/20 text-cyan-200 border border-cyan-400/30'
+          : 'studio-btn flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold text-gray-300 hover:bg-white/10 border border-transparent';
       });
 
       document.getElementById('btn-reset-camera').addEventListener('click', () => {
-        camState.theta = 0.55;
-        camState.phi = 1.05;
-        camState.radius = current3DMode === 'microscope' ? 11.5 : 8.5;
-        updateCameraPosition();
-      });
-
-      document.getElementById('btn-zoom-in').addEventListener('click', () => {
-        camState.radius -= 1.0;
-        updateCameraPosition();
-      });
-
-      document.getElementById('btn-zoom-out').addEventListener('click', () => {
-        camState.radius += 1.0;
-        updateCameraPosition();
-      });
-    }
-
-    function on3DResize() {
-      const container = document.getElementById('three-container');
-      if (!container || !camera || !renderer) return;
-      const w = container.clientWidth;
-      const h = container.clientHeight;
-      camera.aspect = w / h;
-      camera.updateProjectionMatrix();
-      renderer.setSize(w, h);
-    }
-
-    function animateLoop() {
-      requestAnimationFrame(animateLoop);
-      const t = performance.now() * 0.001;
-
-      if (autoRotate && !camState.isDragging) {
-        camState.theta += 0.005;
-        updateCameraPosition();
-      }
-
-      // Subtle biological motion in Mode B
-      if (current3DMode === 'cell' && cellExplorerGroup) {
-        if (cytoplasmParticles) {
-          cytoplasmParticles.rotation.y = t * 0.12;
-        }
-        chromosomeObjects.forEach((ch, idx) => {
-          ch.group.position.y += Math.sin(t * 2.2 + idx) * 0.0008;
-        });
-      }
-
-      // Subtle dropper hover in Mode A Step 2
-      if (current3DMode === 'microscope' && prepStep === 2 && dropperMesh) {
-        dropperMesh.position.y = 1.05 + Math.sin(t * 4) * 0.06;
-      }
-
-      updateCalloutOverlay();
-      if (renderer && scene && camera) {
-        renderer.render(scene, camera);
-      }
-    }
-
-    // Boot everything cleanly after window load
-    window.onload = function () {
-      initCalculatorUI();
-      initPhotoGallery();
-      init3DLab();
-      animateLoop();
-
-      window.addEventListener('resize', drawCellCycleChart);
-    };
-  </script>
-</body>
-</html>
+// ... existing code ... -->
 ```
